@@ -10,6 +10,10 @@ from .topsis import TOPSIS
 from .entropy_weight import EntropyWeight
 from .linear_regression import LinearRegression
 from .polynomial_regression import PolynomialRegression
+from .ensemble import RegressionEnsemble
+from .timeseries import TimeSeriesDecomposition
+from .image import ImageProcessing, EdgeDetection, ImageSegmentation, FeatureExtraction
+from .constrained_opt import ConstrainedOptimizer, MultiObjectiveOptimizer
 
 __all__ = [
     'LinearProgramming',
