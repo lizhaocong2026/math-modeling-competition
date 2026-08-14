@@ -27,3 +27,9 @@ from .doe import ExperimentalDesign
 from .state_space import KalmanFilter, StateSpaceModel, ETSModel
 from .bayesian import BayesianInference, ConjugateBayes, BayesFactor
 from .graph import Graph, NetworkFlow, PageRank
+from .ode_solver import EulerMethod, RK4, AdamsBashforth
+from .pde_solver import HeatEquationSolver, WaveEquationSolver, BlackScholesSolver
+from .cellular_automaton import GameOfLife, LangtonAnt, SchellingSegregation, IslandModel
+from .monte_carlo_advanced import VarianceReduction, ImportanceSampling, LatinHypercubeSampling
+from .combinatorial import TravelingSalesman, KnapsackSolver, JobShopScheduler
+from .statistics import HypothesisTest, NormalityTest, CorrelationTest
