@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import numpy as np
 import sys
 sys.path.insert(0, '..')
@@ -48,7 +48,7 @@ def run_complete_workflow():
     
     print("\n[4] PCA Analysis")
     print("-" * 50)
-    pca = PCA(n_components=2)
+    pca = PCA(n_components=2)\n    pca.fit(data)
     pca_result = pca.transform_with_details(data)
     print(f"Dimensions: {data.shape} -> {pca_result['transformed'].shape}")
     print(f"Explained variance: {[round(v, 4) for v in pca_result['explained_variance_ratio']]}")
