@@ -83,7 +83,7 @@ class AntColony:
         
         return {
             "success": True,
-            "optimal_path": self.best_path.tolist(),
+            "optimal_path": self.best_path,
             "optimal_length": float(self.best_length),
             "best_fitness_history": self.best_history,
             "iterations": len(self.best_history)
