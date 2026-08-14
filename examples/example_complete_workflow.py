@@ -1,5 +1,4 @@
 ﻿# -*- coding: utf-8 -*-
-\"\"\"Complete math modeling workflow example\"\"\"
 import numpy as np
 import sys
 sys.path.insert(0, '..')
@@ -18,7 +17,6 @@ def run_complete_workflow():
     print("Mathematical Modeling Competition - Complete Workflow")
     print("=" * 70)
     
-    # 1. Data preprocessing
     print("\n[1] Data Preprocessing")
     print("-" * 50)
     raw_data = np.array([
@@ -34,7 +32,6 @@ def run_complete_workflow():
     data = result['processed_data']
     print(f"Original: {raw_data.shape} -> Cleaned: {data.shape}")
     
-    # 2. Entropy weight
     print("\n[2] Entropy Weight Method")
     print("-" * 50)
     entropy = EntropyWeight()
@@ -42,7 +39,6 @@ def run_complete_workflow():
     weights = np.array(ew_result['weights'])
     print(f"Weights: {[round(w, 4) for w in weights]}")
     
-    # 3. TOPSIS evaluation
     print("\n[3] TOPSIS Evaluation")
     print("-" * 50)
     topsis = TOPSIS(weights=weights)
@@ -50,7 +46,6 @@ def run_complete_workflow():
     for scheme_idx, score, rank in tp_result['score_ranking']:
         print(f"Scheme {scheme_idx}: score={score:.6f}, rank={rank}")
     
-    # 4. PCA
     print("\n[4] PCA Analysis")
     print("-" * 50)
     pca = PCA(n_components=2)
@@ -58,7 +53,6 @@ def run_complete_workflow():
     print(f"Dimensions: {data.shape} -> {pca_result['transformed'].shape}")
     print(f"Explained variance: {[round(v, 4) for v in pca_result['explained_variance_ratio']]}")
     
-    # 5. Grey prediction
     print("\n[5] GM(1,1) Grey Prediction")
     print("-" * 50)
     scores = np.array(tp_result['scores'])
@@ -66,9 +60,7 @@ def run_complete_workflow():
     gm_result = gm.fit_predict(scores, steps=3)
     print(f"Scores: {[round(s, 4) for s in scores]}")
     print(f"Predictions: {[round(v, 4) for v in gm_result['predicted_values']]}")
-    print(f"Accuracy: {gm_result['accuracy']['等级']}")
     
-    # 6. Curve fitting
     print("\n[6] Curve Fitting")
     print("-" * 50)
     x = np.arange(len(scores))
@@ -76,7 +68,6 @@ def run_complete_workflow():
     print(f"Equation: {cf_result['equation']}")
     print(f"R-squared: {cf_result['r_squared']:.6f}")
     
-    # 7. Optimization
     print("\n[7] Resource Allocation Optimization")
     print("-" * 50)
     c = -weights
