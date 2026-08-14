@@ -48,9 +48,9 @@ def run_complete_workflow():
     
     print("\n[4] PCA Analysis")
     print("-" * 50)
-    pca = PCA(n_components=2)\n    pca.fit(data)
-    pca_result = pca.transform_with_details(data)
-    print(f"Dimensions: {data.shape} -> {pca_result['transformed'].shape}")
+    pca_model = PCA(n_components=2)
+    pca_model.fit(data)
+    pca_result = pca_model.transform_with_details(data)
     print(f"Explained variance: {[round(v, 4) for v in pca_result['explained_variance_ratio']]}")
     
     print("\n[5] GM(1,1) Grey Prediction")
