@@ -33,3 +33,8 @@ from .cellular_automaton import GameOfLife, LangtonAnt, SchellingSegregation, Is
 from .monte_carlo_advanced import VarianceReduction, ImportanceSampling, LatinHypercubeSampling
 from .combinatorial import TravelingSalesman, KnapsackSolver, JobShopScheduler
 from .statistics import HypothesisTest, NormalityTest, CorrelationTest
+from .spatial import SpatialStatistics, SpatialRegression, NetworkAnalysis
+from .game_theory import GameTheory, AuctionTheory, CooperativeGame
+from .finance import BlackScholes, PortfolioOptimization, OptionPricing_MC
+from .convex_opt import ConvexOptimizer, SequentialQuadraticProgramming, InteriorPointMethod
+# from .visualizations.model_viz import ModelVisualization

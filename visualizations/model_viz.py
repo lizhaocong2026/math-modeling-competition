@@ -1,6 +1,6 @@
 ﻿"""
-可视化模块
-提供数学建模竞赛常用图表绘制功能
+数据可视化模板
+针对数学建模竞赛的专用图表
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -11,7 +11,7 @@ import warnings
 class ModelVisualization:
     """模型可视化类"""
     
-    def __init__(self, style: str = "seaborn-v0_8-whitegrid"):
+    def __init__(self, style: str = 'seaborn-v0_8-whitegrid'):
         """
         初始化可视化类
         
@@ -25,7 +25,7 @@ class ModelVisualization:
         
         self.fig = None
         self.ax = None
-        
+    
     def plot_optimization_convergence(
         self,
         best_history: List[float],
@@ -33,18 +33,7 @@ class ModelVisualization:
         title: str = "优化收敛曲线",
         save_path: Optional[str] = None
     ) -> plt.Figure:
-        """
-        绘制优化算法收敛曲线
-        
-        参数:
-            best_history: 每代最佳适应度历史
-            avg_history: 每代平均适应度历史
-            title: 图表标题
-            save_path: 保存路径
-            
-        返回:
-            matplotlib Figure对象
-        """
+        """绘制优化算法收敛曲线"""
         self.fig, self.ax = plt.subplots(figsize=(10, 6))
         
         generations = np.arange(1, len(best_history) + 1)
@@ -69,59 +58,123 @@ class ModelVisualization:
         
         return self.fig
     
-    def plot_comparison_bar(
+    def plot_tsp_result(
         self,
-        labels: List[str],
-        values: List[List[float]],
-        legend_labels: Optional[List[str]] = None,
-        title: str = "方案对比",
+        points: np.ndarray,
+        best_tour: List[int],
+        title: str = "TSP求解结果",
         save_path: Optional[str] = None
     ) -> plt.Figure:
-        """
-        绘制方案对比柱状图
+        """绘制TSP路径图"""
+        self.fig, self.ax = plt.subplots(figsize=(10, 8))
         
-        参数:
-            labels: 方案标签
-            values: 各方案得分列表（每个方案一个列表）
-            legend_labels: 图例标签
-            title: 图表标题
-            save_path: 保存路径
-        """
-        n_schemes = len(labels)
-        n_methods = len(values)
-        x = np.arange(n_schemes)
-        width = 0.8 / n_methods if n_methods > 1 else 0.6
+        # 绘制点
+        x, y = points[:, 0], points[:, 1]
+        self.ax.scatter(x, y, c='red', s=100, zorder=5, label='Cities')
         
-        self.fig, self.ax = plt.subplots(figsize=(max(8, n_schemes * 1.2), 6))
+        # 绘制路径
+        tour_points = points[best_tour]
+        self.ax.plot(tour_points[:, 0], tour_points[:, 1], 'b-', linewidth=2, alpha=0.7)
         
-        colors = plt.cm.Set3(np.linspace(0, 1, n_methods))
+        # 标注城市编号
+        for i, (xi, yi) in enumerate(zip(x, y)):
+            self.ax.annotate(str(i), (xi, yi), xytext=(5, 5), 
+                           textcoords='offset points', fontsize=9)
         
-        for i, (method_values, color) in enumerate(zip(values, colors)):
-            offset = (i - n_methods/2 + 0.5) * width
-            bars = self.ax.bar(
-                x + offset, 
-                method_values, 
-                width, 
-                label=legend_labels[i] if legend_labels else f'Method {i+1}',
-                color=color,
-                edgecolor='black',
-                alpha=0.8
-            )
-            # 添加数值标签
-            for bar, val in zip(bars, method_values):
-                self.ax.text(
-                    bar.get_x() + bar.get_width()/2, 
-                    bar.get_height() + 0.01,
-                    f'{val:.2f}',
-                    ha='center', va='bottom', fontsize=9
-                )
-        
-        self.ax.set_xticks(x)
-        self.ax.set_xticklabels(labels)
-        self.ax.set_ylabel('Score', fontsize=12)
+        self.ax.set_xlabel('X', fontsize=12)
+        self.ax.set_ylabel('Y', fontsize=12)
         self.ax.set_title(title, fontsize=14)
-        self.ax.legend(loc='best')
-        self.ax.grid(True, alpha=0.3, axis='y')
+        self.ax.legend()
+        self.ax.grid(True, alpha=0.3)
+        
+        if save_path:
+            plt.savefig(save_path, dpi=150, bbox_inches='tight')
+            plt.close()
+        else:
+            plt.tight_layout()
+            plt.show()
+        
+        return self.fig
+    
+    def plot_pareto_front(
+        self,
+        objectives: np.ndarray,
+        title: str = "Pareto前沿",
+        save_path: Optional[str] = None
+    ) -> plt.Figure:
+        """绘制Pareto前沿"""
+        self.fig, self.ax = plt.subplots(figsize=(10, 8))
+        
+        if objectives.shape[1] == 2:
+            # 二维Pareto前沿
+            self.ax.scatter(objectives[:, 0], objectives[:, 1], 
+                          c='blue', s=50, alpha=0.7, label='Solutions')
+            
+            # 标记Pareto最优解
+            pareto_mask = self._is_pareto_efficient(objectives[:, 0], objectives[:, 1])
+            self.ax.scatter(objectives[pareto_mask, 0], objectives[pareto_mask, 1],
+                          c='red', s=100, edgecolors='black', label='Pareto Optimal', zorder=5)
+            
+            self.ax.set_xlabel('Objective 1', fontsize=12)
+            self.ax.set_ylabel('Objective 2', fontsize=12)
+        
+        elif objectives.shape[1] == 3:
+            # 三维Pareto前沿
+            from mpl_toolkits.mplot3d import Axes3D
+            self.ax = self.fig.add_subplot(111, projection='3d')
+            self.ax.scatter(objectives[:, 0], objectives[:, 1], objectives[:, 2],
+                          c='blue', s=50, alpha=0.7)
+            
+            self.ax.set_xlabel('Objective 1')
+            self.ax.set_ylabel('Objective 2')
+            self.ax.set_zlabel('Objective 3')
+        
+        self.ax.set_title(title, fontsize=14)
+        self.ax.legend()
+        
+        if save_path:
+            plt.savefig(save_path, dpi=150, bbox_inches='tight')
+            plt.close()
+        else:
+            plt.tight_layout()
+            plt.show()
+        
+        return self.fig
+    
+    def _is_pareto_efficient(self, costs, n_objectives=2):
+        """判断是否为Pareto有效解"""
+        is_efficient = np.ones(costs.shape[0], dtype=bool)
+        
+        for i, c in enumerate(costs):
+            if is_efficient[i]:
+                # 检查是否有其他解支配当前解
+                for j, c2 in enumerate(costs):
+                    if i != j and is_efficient[j]:
+                        if np.all(c2 <= c) and np.any(c2 < c):
+                            is_efficient[i] = False
+                            break
+        
+        return is_efficient
+    
+    def plot_3d_surface(
+        self,
+        X: np.ndarray,
+        Y: np.ndarray,
+        Z: np.ndarray,
+        title: str = "3D函数图像",
+        save_path: Optional[str] = None
+    ) -> plt.Figure:
+        """绘制3D曲面图"""
+        self.fig = plt.figure(figsize=(12, 8))
+        ax = self.fig.add_subplot(111, projection='3d')
+        
+        surf = ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.8)
+        self.fig.colorbar(surf, shrink=0.5, aspect=10)
+        
+        ax.set_xlabel('X', fontsize=12)
+        ax.set_ylabel('Y', fontsize=12)
+        ax.set_zlabel('Z', fontsize=12)
+        ax.set_title(title, fontsize=14)
         
         if save_path:
             plt.savefig(save_path, dpi=150, bbox_inches='tight')
@@ -136,16 +189,10 @@ class ModelVisualization:
         self,
         matrix: np.ndarray,
         titles: Optional[List[str]] = None,
+        title: str = "热力图",
         save_path: Optional[str] = None
     ) -> plt.Figure:
-        """
-        绘制热力图
-        
-        参数:
-            matrix: 数据矩阵
-            titles: 行列标题
-            save_path: 保存路径
-        """
+        """绘制热力图"""
         self.fig, self.ax = plt.subplots(figsize=(10, 8))
         
         im = self.ax.imshow(matrix, cmap='RdYlBu_r', aspect='auto')
@@ -162,47 +209,8 @@ class ModelVisualization:
                 text = self.ax.text(j, i, f'{matrix[i, j]:.2f}',
                                    ha="center", va="center", color="black", fontsize=8)
         
-        self.ax.set_title('Correlation Matrix', fontsize=14)
-        plt.colorbar(im, ax=self.ax, shrink=0.8)
-        
-        if save_path:
-            plt.savefig(save_path, dpi=150, bbox_inches='tight')
-            plt.close()
-        else:
-            plt.tight_layout()
-            plt.show()
-        
-        return self.fig
-    
-    def plot_error_bars(
-        self,
-        means: List[float],
-        errors: List[float],
-        labels: List[str],
-        title: str = "误差棒图",
-        save_path: Optional[str] = None
-    ) -> plt.Figure:
-        """
-        绘制误差棒图
-        
-        参数:
-            means: 均值列表
-            errors: 误差列表
-            labels: 标签列表
-            title: 图表标题
-            save_path: 保存路径
-        """
-        self.fig, self.ax = plt.subplots(figsize=(10, 6))
-        
-        x = np.arange(len(means))
-        bars = self.ax.bar(x, means, yerr=errors, capsize=5, 
-                          color='steelblue', edgecolor='black', alpha=0.7)
-        
-        self.ax.set_xticks(x)
-        self.ax.set_xticklabels(labels, rotation=30)
-        self.ax.set_ylabel('Value', fontsize=12)
         self.ax.set_title(title, fontsize=14)
-        self.ax.grid(True, alpha=0.3, axis='y')
+        plt.colorbar(im, ax=self.ax, shrink=0.8)
         
         if save_path:
             plt.savefig(save_path, dpi=150, bbox_inches='tight')
