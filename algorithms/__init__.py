@@ -1,4 +1,4 @@
-﻿"""算法模块"""
+# Algorithm modules
 from .optimization import LinearProgramming, IntegerProgramming, NonlinearProgramming
 from .ga import GeneticAlgorithm
 from .pso import ParticleSwarm
@@ -37,4 +37,7 @@ from .spatial import SpatialStatistics, SpatialRegression, NetworkAnalysis
 from .game_theory import GameTheory, AuctionTheory, CooperativeGame
 from .finance import BlackScholes, PortfolioOptimization, OptionPricing_MC
 from .convex_opt import ConvexOptimizer, SequentialQuadraticProgramming, InteriorPointMethod
-# from .visualizations.model_viz import ModelVisualization
+from .lstm import LSTM, GRU
+from .prophet import ProphetDecompose, HarmonicRegression
+from .mcdm_advanced import VIKOR, PROMETHEE, ELECTRE
+from .simulation import DiscreteEventSimulation, QueueingSystem, InventorySystem
