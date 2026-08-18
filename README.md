@@ -1,262 +1,99 @@
-# Mathematical Modeling Competition Toolkit
+# 数学建模竞赛全算法目录 · 完整映射（v2.0）
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/)
-[![Pytest](https://img.shields.io/badge/tested%20with-pytest-<COLOR>.svg)](https://pytest.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-> **全国大学生数学建模竞赛(CUMCM)核心算法库**  
-> 提供优化、预测、评价、深度学习等模块的完整实现，29项测试全部通过
+> **核心结论**：本库是 CUMCM 竞赛的完整知识体系——代码（50算法+4案例+6模板）、数据源（109来源）、理论（7篇文档）、文档（17篇）、笔记（22篇MOC）五位一体，3跳内可达任意知识点。
 
 ---
 
-## 目录结构
+## 仓库资产速查
 
-`
-math-modeling-competition/
-│
-├── 📦 algorithms/                 # 核心算法库 (50个文件)
-│   ├── 🔧 优化算法/
-│   │   ├── ga.py                  # 遗传算法
-│   │   ├── pso.py                 # 粒子群优化
-│   │   ├── sa.py                  # 模拟退火
-│   │   ├── de.py                  # 差分进化
-│   │   ├── aco.py                 # 蚁群算法
-│   │   ├── nsga2.py               # NSGA-II多目标优化
-│   │   └── optimization.py        # 线性/整数/非线性规划
-│   │
-│   ├── 📈 预测算法/
-│   │   ├── grey_model.py          # GM(1,1)灰色预测
-│   │   ├── arima.py               # ARIMA时间序列
-│   │   ├── linear_regression.py   # 线性回归
-│   │   ├── lstm.py                # LSTM/GRU深度学习
-│   │   └── prophet.py             # Prophet分解
-│   │
-│   ├── 📊 评价算法/
-│   │   ├── ahp.py                 # 层次分析法
-│   │   ├── topsis.py              # TOPSIS逼近理想解
-│   │   ├── entropy_weight.py      # 熵权法
-│   │   ├── pca.py                 # 主成分分析
-│   │   └── mcdm_advanced.py       # VIKOR/PROMETHEE/ELECTRE
-│   │
-│   ├── 🤖 深度学习/
-│   │   ├── nn.py                  # 神经网络
-│   │   ├── random_forest.py       # 随机森林
-│   │   ├── svm.py                 # 支持向量机
-│   │   └── bayesian_optimization.py # 贝叶斯优化
-│   │
-│   ├── 🔬 仿真模型/
-│   │   ├── monte_carlo.py         # 蒙特卡洛模拟
-│   │   ├── kalman_filter.py       # 卡尔曼滤波
-│   │   └── simulation.py          # 排队系统/库存
-│   │
-│   └── 📐 统计分析/
-│       ├── statistics.py          # 假设检验
-│       ├── mcmc.py                # MCMC采样
-│       └── bayesian.py            # 贝叶斯推断
-│
-├── 📝 cases/                      # CUMCM完整案例 (4个)
-│   ├── cumcm_2023a_drone_inspection.py    # 无人机巡检
-│   ├── cumcm_2022b_ev_charging.py         # 充电调度
-│   ├── cumcm_2021a_power_network.py       # 配电网优化
-│   └── cumcm_2020b_ev_station.py          # 充电站选址
-│
-├── 📋 templates/                  # 竞赛论文模板 (6个)
-│   ├── competition_template.py
-│   ├── optimization_template.py
-│   ├── prediction_template.py
-│   ├── evaluation_template.py
-│   ├── nn_template.py
-│   └── classification_clustering_template.py
-│
-├── 🧪 tests/                      # 测试用例 (29项通过)
-│   ├── test_algorithms.py
-│   ├── test_advanced.py
-│   ├── test_extended.py
-│   └── test_new_algorithms.py
-│
-├── 📚 docs/                       # 理论文档
-│   ├── theory/                    # 数学推导
-│   ├── guide/                     # 竞赛指南
-│   └── tutorials/                 # 入门教程
-│
-├── 🎨 visualizations/             # 可视化工具
-│   └── model_viz.py
-│
-├── 📄 requirements.txt            # 依赖清单
-├── 📜 LICENSE                     # MIT许可证
-└── 📖 README.md                   # 本文件
-`
+| 模块 | 数量 | 说明 |
+|------|------|------|
+| algorithms/ | 50个.py | 优化/预测/评价/深度学习/仿真/统计 |
+| cases/ | 4个 | 2020-2023 CUMCM 完整案例 |
+| templates/ | 6个 | 竞赛论文全类型模板 |
+| docs/data_sources/ | 5个.md | 109+ 权威数据源文档 |
+| docs/guide/ | 4个.md | 竞赛指南/数据预处理/论文写作/可视化 |
+| docs/theory/ | 7个.md | 数学推导/算法理论 |
+| docs/templates/ | 7个.md | 模板详细用法指南（新增） |
+| docs/examples/ | 4个.md | 示例代码详解（新增） |
+| docs/faq/ | 3个.md | 常见问题/决策树/避坑指南（新增） |
+| examples/ | 4个.py | 完整工作流示例 |
+| tests/ | 29项 | 全部通过 |
+| utils/ | 2个.py | 数据预处理+工具函数 |
+| visualizations/ | 1个.py | 模型可视化 |
 
 ---
 
-## 快速开始
+## 知识库笔记索引
 
-`ash
-# 克隆仓库
-git clone https://github.com/lizhaocong2026/math-modeling-competition.git
-cd math-modeling-competition
+### 算法核心（9篇）
 
-# 安装依赖
-pip install -r requirements.txt
+| 笔记 | 核心内容 | 关键文件 |
+|------|---------|---------|
+| [[优化算法-竞赛手册]] | GA/PSO/SA/DE/ACO/NSGA-II/规划/贝叶斯优化 | ga.py, pso.py, aco.py, nsga2.py, optimization.py |
+| [[预测算法-竞赛手册]] | GM(1,1)/ARIMA/LSTM/Prophet/回归/拟合 | grey_model.py, arima.py, lstm.py, prophet.py |
+| [[评价算法-竞赛手册]] | AHP/TOPSIS/熵权/PCA/VIKOR/PROMETHEE/ELECTRE | ahp.py, topsis.py, entropy_weight.py, pca.py |
+| [[深度学习与仿真算法-竞赛手册]] | NN/RF/SVM/蒙特卡洛/卡尔曼/排队论/MCMC | nn.py, random_forest.py, svm.py, monte_carlo.py |
+| [[数据处理与预处理-竞赛手册]] | 缺失值/异常值/标准化/特征工程 | utils/data_preprocessor.py |
+| [[高级算法专题-博弈论图论金融空间统计]] | 博弈论/图论/金融数学/空间统计/ODE/PDE/组合优化 | game_theory.py, graph.py, finance.py |
+| [[算法实现详解-代码速查]] | 所有算法的调用接口和代码模板 | 全库算法 |
+| [[数学建模选题决策树]] | 赛题到算法到数据完整决策流程（新增） | - |
+| [[常见错误与避坑指南]] | 建模/算法/论文/数据四阶段常见错误（新增） | - |
 
-# 运行测试
-python -m pytest tests/ -v
+### 模板速查（3篇）
 
-# 使用示例
-python -c "from algorithms import GeneticAlgorithm; print('OK')"
-`
+| 笔记 | 核心内容 | 对应仓库文件 |
+|------|---------|-------------|
+| [[优化类模板用法指南]] | A题优化模板参数调优+常见问题 | templates/optimization_template.py |
+| [[预测类模板用法指南]] | B题预测模型选择+评估指标 | templates/prediction_template.py |
+| [[评价类模板用法指南]] | C题赋权组合策略+TOPSIS应用 | templates/evaluation_template.py |
 
----
+### 论文写作（3篇）
 
-## 算法速查表
+| 笔记 | 核心内容 |
+|------|---------|
+| [[竞赛指南-CUMCM全流程]] | 三天安排/题型分类/FQA/团队分工 |
+| [[论文写作与可视化-竞赛手册]] | 摘要模板/图表规范/LaTeX格式/配色 |
+| [[论文模板与灵敏度分析]] | LaTeX模板/Python模板/灵敏度分析代码 |
 
-### 优化算法 (A题 · 资源分配、路径规划)
+### 案例与导航（3篇）
 
-| 算法 | 文件 | 复杂度 | 适用场景 |
-|------|------|--------|----------|
-| 线性规划 | optimization.py | O(n³) | 资源分配、生产计划 |
-| 整数规划 | optimization.py | NP-hard | 0-1规划、指派问题 |
-| 遗传算法 GA | ga.py | O(G·N) | 全局优化、NP难问题 |
-| 粒子群 PSO | pso.py | O(I·N) | 连续空间优化 |
-| 模拟退火 SA | sa.py | O(I) | 组合优化、TSP |
-| 差分进化 DE | de.py | O(G·N) | 函数优化 |
-| 蚁群 ACO | co.py | O(I·N²) | 路径规划 |
-| NSGA-II | 
-sga2.py | O(G·N²) | 多目标优化 |
-| 贝叶斯优化 | ayesian_optimization.py | O(n·gp) | 黑盒函数优化 |
+| 笔记 | 核心内容 |
+|------|---------|
+| [[案例解析-CUMCM历年真题]] | 2020-2023四题深度解析+可复用点 |
+| [[算法-数据源匹配速查表]] | 选题到算法到数据的完整决策链+可信度分级 |
+| [[数学建模国赛数据库汇总-总控]] | 算法乘数据源全景地图 |
 
-### 预测算法 (B题 · 时间序列、趋势预测)
+### 数据源（4篇）
 
-| 算法 | 文件 | 特点 | 适用场景 |
-|------|------|------|----------|
-| GM(1,1) | grey_model.py | 小样本 | 数据不足的预测 |
-| ARIMA | rima.py | 经典方法 | 平稳时间序列 |
-| 线性回归 | linear_regression.py | 简单高效 | 趋势预测 |
-| LSTM | lstm.py | 深度学习 | 长期依赖序列 |
-| GRU | lstm.py | 轻量化LSTM | 快速预测 |
-| Prophet | prophet.py | 分解模型 | 含季节性的数据 |
+| 笔记 | 来源数 | 核心来源 |
+|------|--------|---------|
+| [[数学建模国赛数据库汇总-金融财经数据]] | 16 | 同花顺/东方财富/CCER/INSEE |
+| [[数学建模国赛数据库汇总-互联网与报告分析]] | 20 | 百度指数/QuestMobile/易观/清博 |
+| [[数学建模国赛数据库汇总-地理环境与遥感]] | 49 | PM25.in/GLCF/NOAA/NASA/FAO |
+| [[数学建模国赛数据库汇总-政府与行业数据]] | 24 | 国家数据/统计年鉴/CADMAPPER |
 
-### 评价算法 (C题 · 方案评价、指标体系)
+### 审查与治理（1篇）
 
-| 算法 | 文件 | 类型 | 适用场景 |
-|------|------|------|----------|
-| AHP | hp.py | 主观赋权 | 专家打分评价 |
-| TOPSIS | 	opsis.py | 距离评价 | 多方案比选 |
-| 熵权法 | entropy_weight.py | 客观赋权 | 数据驱动评价 |
-| PCA | pca.py | 降维 | 指标压缩 |
-| VIKOR | mcdm_advanced.py | 妥协排序 | 冲突性决策 |
-| PROMETHEE | mcdm_advanced.py | 偏好排序 | 多准则决策 |
-| ELECTRE | mcdm_advanced.py | outranking | 筛选排除 |
+| 笔记 | 内容 |
+|------|------|
+| [[数学建模数据源融合-最终审查报告]] | 仓库脑暴结论+融合评估+后续建议 |
 
 ---
 
-## 典型案例
+## 快速入口
 
-### 2023年 A题 · 无人机巡检路径规划
-`python
-from cases.cumcm_2023a_drone_inspection import DroneInspectionPlanner
-
-planner = DroneInspectionPlanner(num_panels=50)
-result = planner.solve_tsp_ga()
-print(f"最优距离: {result['distance']:.2f} m")
-print(f"总巡检时间: {result['total_time_hours']:.2f} 小时")
-`
-
-### 2022年 B题 · 新能源汽车充电调度
-`python
-from cases.cumcm_2022b_ev_charging import EVChargingOptimizer
-
-optimizer = EVChargingOptimizer()
-result = optimizer.solve_greedy()
-print(f"平均等待时间: {result['avg_wait_time']:.2f} 小时")
-`
-
-### 2021年 A题 · 配电网潮流计算
-`python
-from cases.cumcm_2021a_power_network import PowerFlowSolver
-
-solver = PowerFlowSolver(bus_data, branch_data, load_data)
-result = solver.newton_raphson()
-print(f"收敛状态: {result['converged']}")
-`
-
-### 2020年 B题 · 充电站选址定容
-`python
-from cases.cumcm_2020b_ev_station import EVStationPlanner
-
-planner = EVStationPlanner()
-result = planner.solve_ga()
-print(f"Pareto解数量: {result['n_solutions']}")
-`
+- 新手入门：[[竞赛指南-CUMCM全流程]] -> [[算法实现详解-代码速查]] -> [[常见错误与避坑指南]]
+- 选题决策：[[数学建模选题决策树]] -> [[算法-数据源匹配速查表]] -> 对应数据源笔记
+- 模板速查：[[优化类模板用法指南]] / [[预测类模板用法指南]] / [[评价类模板用法指南]]
+- 算法学习：[[优化算法-竞赛手册]] / [[预测算法-竞赛手册]] / [[评价算法-竞赛手册]]
+- 论文写作：[[论文写作与可视化-竞赛手册]] -> [[论文模板与灵敏度分析]]
+- 真题参考：[[案例解析-CUMCM历年真题]]
+- 高级专题：[[高级算法专题-博弈论图论金融空间统计]]
+- FAQ：docs/faq/faq.md（仓库内常见问题）
 
 ---
 
-## 技术特点
-
-- ✅ **纯NumPy/SciPy实现** - 零深度学习框架依赖
-- ✅ **标准化接口** - 统一返回结构化字典
-- ✅ **完整测试覆盖** - 29项测试全部通过
-- ✅ **竞赛导向设计** - 针对CUMCM题型优化
-- ✅ **数学推导详尽** - 附完整公式证明
-
----
-
-## 依赖环境
-
-| 包 | 版本 | 用途 |
-|----|------|------|
-| numpy | >=1.20.0 | 数值计算 |
-| scipy | >=1.7.0 | 科学计算 |
-| matplotlib | >=3.5.0 | 可视化 |
-| scikit-learn | >=1.0.0 | 机器学习 |
-| pandas | >=1.3.0 | 数据处理 |
-| pytest | >=7.0.0 | 测试框架 |
-
-`ash
-pip install numpy scipy matplotlib scikit-learn pandas pytest
-`
-
----
-
-## 测试
-
-`ash
-# 运行全部测试
-python -m pytest tests/ -v
-
-# 输出:
-# ============================= 29 passed in 1.05s ==============================
-`
-
----
-
-## 引用
-
-`ibtex
-@misc{math-modeling-competition,
-  title={Mathematical Modeling Competition Toolkit},
-  author={lizhaocong2026},
-  year={2026},
-  url={https://github.com/lizhaocong2026/math-modeling-competition}
-}
-`
-
-
----
-
-## 数据源参考
-
-本仓库配套 **90+ 权威数据源**，详见 [docs/data_sources/](./docs/data_sources/)
-
-| 分类 | 来源数 | 文档 |
-|------|--------|------|
-| 金融财经 | 16 | [01-finance-data.md](./docs/data_sources/01-finance-data.md) |
-| 互联网与报告 | 20 | [02-internet-data.md](./docs/data_sources/02-internet-data.md) |
-| 地理环境与遥感 | 49 | [03-geography-env-data.md](./docs/data_sources/03-geography-env-data.md) |
-| 政府与行业 | 24 | [04-government-industry-data.md](./docs/data_sources/04-government-industry-data.md) |
-
----
----
-## License
-
-[MIT License](LICENSE) - 自由使用、修改和分发
+> 创建日期：2026-08-18  最后更新：2026-08-18  
+> 数据源来源：4 张原始截图（109来源）  仓库地址：https://github.com/lizhaocong2026/math-modeling-competition  
+> 本轮新增：模板用法指南3篇 + 选题决策树1篇 + 避坑指南1篇 + FAQ文档3篇 + Example文档4篇
