@@ -39,3 +39,6 @@ wheels/
 results/
 output/
 figures/
+
+# Data files
+data/
