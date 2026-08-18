@@ -1,143 +1,87 @@
-﻿# 数据预处理手册
+# 数据预处理完全指南
 
-## 一、数据清洗
-
-### 1. 缺失值处理
-
-#### 检测方法
-```python
-# 查看缺失情况
-df.isnull().sum()
-df.isnull().mean()  # 缺失比例
-```
-
-#### 处理方法
-
-| 方法 | 适用场景 | 说明 |
-|------|----------|------|
-| 删除 | 缺失<5% | 直接删除缺失行 |
-| 均值填充 | 数值型，近似正态 | 用列均值填充 |
-| 中位数填充 | 有异常值 | 用列中位数填充 |
-| 众数填充 | 分类变量 | 用出现次数最多的值 |
-| 插值 | 时间序列 | 线性/样条插值 |
-| 模型预测 | 缺失较多 | 用其他变量预测 |
-
-### 2. 异常值处理
-
-#### 检测方法
-- **3σ原则**: |x - μ| > 3σ
-- **箱线图**: Q1-1.5IQR 或 Q3+1.5IQR
-- **Z-score**: |z| > 3
-
-#### 处理方法
-- 删除
-- 修正（如有错误）
-- 截断（Winsorize）
-- 替换为中位数
+> **仓库文件**：utils/data_preprocessor.py  
+> **对应笔记**：[[数据处理与预处理-竞赛手册]]
 
 ---
 
-## 二、数据标准化
+## 一、预处理流程
 
-### 1. Min-Max标准化
-```
-x' = (x - min) / (max - min)
-```
-结果: [0, 1]
-
-### 2. Z-score标准化
-```
-x' = (x - μ) / σ
-```
-结果: 均值0，标准差1
-
-### 3. 归一化
-```
-x' = x / ||x||
-```
-结果: 向量模为1
-
-### 4. 选择建议
-
-| 场景 | 推荐方法 |
-|------|----------|
-| 神经网络 | Z-score |
-| KNN/KMeans | Min-Max |
-| 矩阵分解 | Z-score |
-| 距离计算 | Min-Max |
+原始数据 -> 质量评估 -> 缺失值处理 -> 异常值处理 -> 标准化 -> 特征工程 -> 干净数据
 
 ---
 
-## 三、数据变换
+## 二、缺失值处理
 
-### 1. 对数变换
-```
-x' = log(x)
-```
-适用: 右偏分布
-
-### 2. 平方根变换
-```
-x' = √x
-```
-适用: 轻度右偏
-
-### 3. Box-Cox变换
-```
-x'(λ) = {(x^λ - 1)/λ, λ≠0; log(x), λ=0}
-```
-自动选择最优λ
+| 方法 | 适用场景 | 代码 |
+|------|---------|------|
+| 均值填充 | 数值型，缺失<5% | data.fillna(data.mean()) |
+| 中位数填充 | 有异常值时 | data.fillna(data.median()) |
+| 众数填充 | 类别型 | data.fillna(data.mode().iloc[0]) |
+| 前后值填充 | 时序数据 | data.fillna(method='ffill') |
+| KNN填充 | 缺失较多 | KNNImputer(n_neighbors=5) |
+| 删除 | 缺失>30%且样本量大 | data.dropna() |
 
 ---
 
-## 四、特征工程
+## 三、异常值检测与处理
 
-### 1. 特征选择
-
-#### 过滤法
-- 相关系数
-- 卡方检验
-- 信息增益
-
-#### 包裹法
-- 递归特征消除 (RFE)
-- 前向/后向选择
-
-#### 嵌入法
-- Lasso回归
-- 树模型重要性
-
-### 2. 特征构造
-- 多项式特征
-- 交叉特征
-- 时间特征（年/月/日/周几）
-- 比率特征
+| 方法 | 原理 | 适用 |
+|------|------|------|
+| IQR法 | Q1-1.5IQR ~ Q3+1.5IQR | 通用 |
+| 3sigma法 | 超出均值±3标准差的范围 | 正态分布数据 |
+| Z-score | abs(z)>3为异常 | 标准化后数据 |
+| DBSCAN | 密度 reachable | 高维数据 |
 
 ---
 
-## 五、代码示例
+## 四、标准化与归一化
 
-```python
-import numpy as np
-import pandas as pd
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from sklearn.impute import SimpleImputer
-from sklearn.compose import ColumnTransformer
-
-# 1. 缺失值填充
-imputer = SimpleImputer(strategy='median')
-X_filled = imputer.fit_transform(X)
-
-# 2. 标准化
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X_filled)
-
-# 3. 结合使用
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', StandardScaler(), numeric_cols)
-    ])
-X_processed = preprocessor.fit_transform(df)
-```
+| 方法 | 公式 | 特点 |
+|------|------|------|
+| Min-Max | (x-min)/(max-min) | 映射到[0,1]，对异常值敏感 |
+| Z-score | (x-mu)/sigma | 均值为0方差为1，最常用 |
+| MaxAbs | x/max(abs(x)) | 映射到[-1,1]，保留符号 |
+| Robust | (x-Median)/IQR | 对异常值鲁棒 |
 
 ---
+
+## 五、特征工程
+
+### 5.1 特征选择
+
+| 方法 | 原理 | 工具 |
+|------|------|------|
+| 相关系数 | 与目标变量相关性高的保留 | df.corr().abs() |
+| 互信息 | 非线性关系也能捕捉 | mutual_info_classif() |
+| 递归特征消除 | 逐步剔除最不重要的特征 | RFE |
+| 树模型重要性 | 基于特征分裂贡献 | feature_importances_ |
+
+### 5.2 特征构造
+
+- 比率特征：income / population
+- 差分特征（时序）：value.diff()
+- 滑动窗口统计：rolling(7).mean()
+- 交并特征：A / (B + 1e-8)
+
+### 5.3 编码处理
+
+| 方法 | 适用 | 说明 |
+|------|------|------|
+| Label Encoding | 有序类别 | 0,1,2,... |
+| One-Hot Encoding | 无序类别 | 二元特征向量 |
+| Target Encoding | 高基数类别 | 用目标均值替换 |
+
+---
+
+## 六、数据质量评估
+
+| 指标 | 计算方法 | 标准 |
+|------|---------|------|
+| 缺失率 | 缺失值数/总数 | <5%优秀，<20%可用 |
+| 重复率 | 重复行数/总行数 | 应为0 |
+| 异常率 | 异常值数/总数 | <3%可接受 |
+| 一致性 | 逻辑矛盾比例 | 应为0 |
+
+---
+> **更新日期**：2026-08-18
