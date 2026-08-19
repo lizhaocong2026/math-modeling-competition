@@ -1,0 +1,16 @@
+\\newpage
+\\section{问题分析}
+
+\\subsection{问题一分析}
+本题需要建立充电站选址与定容的数学模型。这是一个典型的设施选址问题（Facility Location Problem, FLP），需要同时确定：
+\\begin{enumerate}
+    \\item 充电站的位置（离散选址）
+    \\item 每个站的充电桩数量（连续定容）
+\\end{enumerate}
+目标是在满足用户服务需求的前提下，最小化总成本。
+
+\\subsection{问题二分析}
+不同预算约束会导致不同的最优选址方案。我们需要分析预算变化对选址结果的影响，这可以通过参数规划（Parametric Programming）方法实现。
+
+\\subsection{问题三分析}
+灵敏度分析关注模型参数不确定性对解的影响。建设成本、充电桩成本和用户分布的不确定性都需要考虑。

@@ -1,0 +1,44 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{数据预处理}
+\\begin{enumerate}[label=(\\arabic*), itemindent=0pt, labelindent=\\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
+    \\item[\ 1$] \quad 缺失值检测与线性插值补全
+    \\item[\ 2$] \quad STL分解： = T_t + S_t + R_t$
+    \\item[\ 3$] \quad 数据标准化
+\\end{enumerate}
+
+\\subsection{Transformer预测模型}
+\\subsubsection{Self-Attention机制}
+\\text{Attention}(Q, K, V) = \\text{softmax}\\!\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V
+其中=W_Q x$，=W_K x$，=W_V x$。
+
+\\subsubsection{多头注意力}
+\\text{MultiHead}(Q,K,V) = \\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_h)W^O
+
+\\subsubsection{位置编码}
+PE_{(pos, 2i)} = \\sin\\!\\left(\\frac{pos}{10000^{2i/d_{model}}}\\right)
+PE_{(pos, 2i+1)} = \\cos\\!\\left(\\frac{pos}{10000^{2i/d_{model}}}\\right)
+
+\\subsection{模型训练}
+\\begin{itemize}
+    \\item 序列长度：48小时
+    \\item 预测步长：24小时
+    \\item 学习率：0.0001
+    \\item 训练轮数：100 epochs
+\\end{itemize}
+
+\\subsection{求解结果}
+\\begin{table}[H]
+\\centering
+\\caption{不同模型预测性能对比}
+\\begin{tabular}{c c c c}
+\\toprule
+模型 & MAE & RMSE & MAPE(\\%) \\\\
+\\midrule
+ARIMA & 0.045 & 0.058 & 5.3 \\\\
+LSTM & 0.038 & 0.049 & 4.6 \\\\
+\\textbf{Transformer} & \\textbf{0.032} & \\textbf{0.041} & \\textbf{3.8} \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}

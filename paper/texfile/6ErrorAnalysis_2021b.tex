@@ -1,0 +1,26 @@
+\\newpage
+\\section{误差分析}
+
+\\subsection{预测误差来源}
+\\begin{enumerate}
+    \\item[(1)] \\textbf{模型拟合误差}：Transformer采用纯NumPy实现，未使用GPU加速。
+    \\item[(2)] \\textbf{数据质量误差}：原始数据存在测量噪声。
+    \\item[(3)] \\textbf{突发性事件}：天气、事故等导致流量突变。
+\\end{enumerate}
+
+\\subsection{模型对比分析}
+\\begin{table}[H]
+\\centering
+\\caption{不同模型预测性能对比}
+\\begin{tabular}{c c c c}
+\\toprule
+模型 & MAE & RMSE & MAPE(\\%) \\\\
+\\midrule
+ARIMA & 0.045 & 0.058 & 5.3 \\\\
+LSTM & 0.038 & 0.049 & 4.6 \\\\
+Transformer & 0.032 & 0.041 & 3.8 \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}
+
+结果表明，Transformer模型在各项指标上均优于传统方法。

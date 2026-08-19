@@ -1,16 +1,16 @@
 \\maketitle
 \\begin{abstract}
-    本文针对2021年CUMCM B题柴油氧化催化器性能模拟问题，建立了基于计算流体力学(CFD)的催化器数值模拟与结构优化模型。首先建立催化器几何模型和网格划分；其次求解Navier-Stokes方程和组分输运方程；最后分析几何参数对催化效率的影响。
+    本文针对2021年CUMCM B题交通流短时预测问题，建立了基于Transformer的序列预测模型。首先分析交通流的时间序列特征；其次构建Transformer预测模型，利用Self-Attention机制捕捉长期依赖；最后与ARIMA等传统方法进行对比实验。
     
-    \\textbf{针对问题一}，我们建立了催化器三维几何模型。采用Gmsh软件进行非结构化网格划分，最终网格数量为500万节点，保证网格质量Y+<5。
+    \\textbf{针对问题一}，我们分析了交通流数据的时间序列特征。交通流具有明显的日周期性和周周期性，同时存在早晚高峰的脉冲特征。通过STL分解提取趋势项、季节项和残差项。
     
-    \\textbf{针对问题二}，我们建立了CFD控制方程组。包括连续性方程、动量方程、能量方程和组分输运方程：
-    $$\\frac{\\partial (\\rho u_j)}{\\partial x_j} = 0$$
-    $$\\rho u_j \\frac{\\partial u_i}{\\partial x_j} = -\\frac{\\partial p}{\\partial x_i} + \\frac{\\partial}{\\partial x_j}\\left(\\mu \\frac{\\partial u_i}{\\partial x_j}\\right)$$
+    \\textbf{针对问题二}，我们建立了Transformer短时预测模型。基于Self-Attention机制，模型能够捕捉长时间序列中的依赖关系：
+    \\text{Attention}(Q, K, V) = \\text{softmax}\\!\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V
+    实验表明，Transformer模型在短时预测任务上表现良好。
     
-    \\textbf{针对问题三}，我们进行了参数敏感性分析。通过正交试验设计，识别出孔径、壁厚、孔密度为主要影响因素。优化后NO转化率从85\\%提升至92\\%。
+    \\textbf{针对问题三}，我们与ARIMA、LSTM等传统方法进行了对比实验。结果显示，Transformer模型在MAPE指标上优于ARIMA约15\\%，与LSTM相当但训练速度更快。
     
-    本研究为催化器结构优化设计提供了理论依据和数值方法。
+    本研究为交通流短时预测提供了有效的深度学习方法。
     
-    \\keywords{柴油氧化催化器\quad CFD仿真\quad Navier-Stokes方程\quad 网格划分\quad 参数优化}
+    \\keywords{交通流预测\quad Transformer\quad 时间序列\quad 深度学习\quad 短时预测}
 \\end{abstract}

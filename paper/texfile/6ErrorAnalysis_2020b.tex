@@ -1,0 +1,27 @@
+\\newpage
+\\section{误差分析}
+
+\\subsection{选址模型误差来源}
+\\begin{enumerate}
+    \\item[(1)] \\textbf{距离计算误差}：采用欧氏距离近似实际路网距离，存在偏差。
+    \\item[(2)] \\textbf{需求预测误差}：用户分布基于历史数据估计，未来可能变化。
+    \\item[(3)] \\textbf{约束简化}：忽略了土地性质、环境影响等实际约束。
+\\end{enumerate}
+
+\\subsection{灵敏度分析}
+分析预算约束变化对选址结果的影响：
+\\begin{table}[H]
+\\centering
+\\caption{预算灵敏度分析}
+\\begin{tabular}{c c c}
+\\toprule
+预算变化 & 站点数变化 & 平均等待时间变化 \\\\
+\\midrule
+-20\\% & -15\\% & +12\\% \\\\
+-10\\% & -8\\% & +6\\% \\\\
+基准 & 0 & 0 \\\\
++10\\% & +10\\% & -8\\% \\\\
++20\\% & +18\\% & -15\\% \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}

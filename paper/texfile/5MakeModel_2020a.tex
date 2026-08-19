@@ -1,0 +1,47 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{数据预处理}
+\\begin{enumerate}[label=(\\arabic*), itemindent=0pt, labelindent=\\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
+    \\item[\ 1$] \quad 缺失值检测与线性插值补全
+    \\item[\ 2$] \quad 异常值检测（3\\sigma准则）与Winsorize处理
+    \\item[\ 3$] \quad Min-Max标准化：^* = \\frac{x - x_{\\min}}{x_{\\max} - x_{\\min}}$
+\\end{enumerate}
+
+\\subsection{问题一模型：MNL选择模型}
+假设车主选择停车场：
+U_i = \\alpha - \\beta c_i + \\epsilon_i
+其中，$\\epsilon_i，服从Gumbel分布。根据离散选择理论，选择概率为：
+P_i = \\frac{e^{U_i}}{\\sum_j e^{U_j}} = \\frac{e^{\\alpha - \\beta c_i}}{\\sum_j e^{\\alpha - \\beta c_j}}
+
+\\subsection{问题二模型：Stackelberg博弈}
+\\subsubsection{领导者问题（运营商）}
+\\max_p \\pi_1 = \\sum_i (c_i - cost_i) \\cdot D_i(p)
+\\text{s.t.} \\quad c_i^{\\min} \\leq c_i \\leq c_i^{\\max}
+
+\\subsubsection{追随者问题（车主）}
+q_i^* = \\arg\\max_q \\pi_2 = \\sum_i U_i(q_i)
+\\text{s.t.} \\quad \\sum_i q_i = Q_{total}
+
+\\subsubsection{Stackelberg均衡}
+均衡满足：
+p^* = \\arg\\max_p \\pi_1(p, q^*(p))
+q^* \\in \\arg\\max_q \\pi_2(p^*, q)
+
+\\subsection{模型求解}
+采用KKT条件求解均衡解。通过数值搜索方法，得到最优定价策略。
+
+\\subsection{求解结果}
+\\begin{table}[H]
+\\centering
+\\caption{最优定价策略}
+\\begin{tabular}{c c c}
+\\toprule
+停车场 & 最优价格(元/小时) & 预期需求量 \\
+\\midrule
+A & 15.2 & 180 \\
+B & 12.8 & 220 \\
+C & 18.5 & 150 \\
+\\bottomrule
+\\end{tabular}
+\\end{table}

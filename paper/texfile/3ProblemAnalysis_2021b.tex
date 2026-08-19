@@ -1,0 +1,22 @@
+\\newpage
+\\section{问题分析}
+
+\\subsection{问题一分析}
+交通流时间序列具有复杂的动态特征：
+\\begin{enumerate}
+    \\item \\textbf{周期性}：日周期（早晚高峰）和周周期（工作日/周末）
+    \\item \\textbf{趋势性}：长期增长或下降趋势
+    \\item \\textbf{随机性}：天气、事件等随机因素影响
+\\end{enumerate}
+STL分解可以将序列分解为趋势项、季节项和残差项。
+
+\\subsection{问题二分析}
+Transformer模型的核心是Self-Attention机制，能够捕捉序列中的长距离依赖关系。对于交通流预测，我们需要：
+\\begin{itemize}
+    \\item 合理设计输入序列长度
+    \\item 处理多变量输入（时间、日期、天气等）
+    \\item 设计合适的损失函数
+\\end{itemize}
+
+\\subsection{问题三分析}
+对比实验需要设计合理的评估指标（MAE、RMSE、MAPE）和 baseline 方法（ARIMA、LSTM），确保对比的公平性和科学性。

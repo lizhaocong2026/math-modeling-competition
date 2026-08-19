@@ -1,0 +1,49 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{问题一模型：多目标选址-定容模型}
+\\subsubsection{决策变量}
+\\begin{itemize}
+    \\item  \\in \\{0,1\\}$：是否在候选位置
+    \\item  \\in \\mathbb{Z}^+$：站点
+\\end{itemize}
+
+\\subsubsection{目标函数}
+\\begin{align}
+\\min Z_1 &= \\sum_i C_{build} \\cdot y_i + \\sum_j C_{charger} \\cdot z_j & \\text{(建设成本)} \\\\
+\\min Z_2 &= \\sum_k w_k \\cdot t_k & \\text{(用户等待时间)}
+\\end{align}
+
+\\subsubsection{约束条件}
+\\begin{align}
+&\\text{预算约束：} && \\sum_i C_{build} \\cdot y_i + \\sum_j C_{charger} \\cdot z_j \\leq B \\\\
+&\\text{服务约束：} && \\sum_i d_{ik} \\cdot y_i \\geq d_{min}, \\quad \\forall k \\\\
+&\\text{容量约束：} && z_j^{\\min} \\leq z_j \\leq z_j^{\\max}
+\\end{align}
+
+\\subsection{模型求解：NSGA-II算法}
+采用NSGA-II算法求解Pareto前沿：
+\\begin{enumerate}
+    \\item 初始化种群，随机生成选址方案
+    \\item 计算个体适应度（两个目标值）
+    \\item 快速非支配排序
+    \\item 计算拥挤度距离
+    \\item 选择、交叉、变异操作
+    \\item 更新种群，迭代至收敛
+\\end{enumerate}
+
+\\subsection{求解结果}
+\\begin{table}[H]
+\\centering
+\\caption{Pareto最优解集}
+\\begin{tabular}{c c c}
+\\toprule
+方案 & 建设成本(万元) & 平均等待时间(分钟) \\
+\\midrule
+1 & 120 & 8.5 \\\\
+2 & 150 & 6.2 \\\\
+3 & 180 & 4.8 \\\\
+4 & 210 & 3.5 \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}

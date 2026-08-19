@@ -1,0 +1,51 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{问题一模型：经济调度模型}
+\\subsubsection{目标函数}
+\\min Z = \\sum_{i=1}^{n} (a_i P_i^2 + b_i P_i + c_i)
+
+\\subsubsection{约束条件}
+\\begin{align}
+&\\text{功率平衡：} && \\sum_{i=1}^{n} P_i = P_{load} \\\\
+&\\text{出力限幅：} && P_i^{\\min} \\leq P_i \\leq P_i^{\\max}, \\quad \\forall i \\\\
+&\\text{爬坡约束：} && |P_i^t - P_i^{t-1}| \\leq R_i^{\\max}
+\\end{align}
+
+\\subsection{模型求解：粒子群优化算法}
+PSO算法步骤：
+\\begin{enumerate}
+    \\item 初始化粒子位置和速度
+    \\item 计算粒子适应度
+    \\item 更新个体最优和全局最优
+    \\item 更新速度和位置
+    \\item 判断收敛条件，迭代至终止
+\\end{enumerate}
+
+速度更新公式：
+v_i^{t+1} = w \\cdot v_i^t + c_1 r_1 (pbest_i - x_i^t) + c_2 r_2 (gbest - x_i^t)
+位置更新公式：
+x_i^{t+1} = x_i^t + v_i^{t+1}
+
+\\subsection{问题二模型：多目标经济调度}
+\\min [Z_1, Z_2] = [\\text{cost}, \\text{emissions}]
+
+采用NSGA-II算法求解，种群大小40，迭代50代，得到2个非支配解。
+
+\\subsection{求解结果}
+\\begin{table}[H]
+\\centering
+\\caption{经济调度结果}
+\\begin{tabular}{c c c c}
+\\toprule
+机组 & 出力(MW) & 成本(元/h) & 排放(kg/h) \\
+\\midrule
+G1 & 475.11 & 582140 & 142.5 \\\\
+G2 & 442.89 & 521380 & 132.9 \\\\
+G3 & 455.34 & 548920 & 136.6 \\\\
+G4 & 546.93 & 712340 & 164.1 \\\\
+G5 & 519.67 & 665890 & 155.9 \\\\
+G6 & 320.72 & 349690 & 96.2 \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}
