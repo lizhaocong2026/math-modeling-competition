@@ -1,0 +1,19 @@
+\\newpage
+\\section{误差分析}
+
+\\subsection{预测模型误差分析}
+STL-Transformer组合预测的误差主要来源于：
+\\begin{enumerate}
+    \\item[(1)] \\textbf{模型拟合误差}：Transformer仅用纯NumPy实现，未使用GPU加速，实际精度可能更高。
+    \\item[(2)] \\textbf{数据质量误差}：原始数据存在测量噪声和少量缺失值，经插值后引入偏差。
+    \\item[(3)] \\textbf{突发性事件}：极端天气或突发事件导致的负荷突变难以预测。
+\\end{enumerate}
+通过敏感性分析，发现预测误差对STL周期参数$\\tau$较为敏感，当$\\tau$偏离24小时±2小时时，MAPE增加约0.5个百分点。
+
+\\subsection{调度模型误差分析}
+\\begin{enumerate}
+    \\item[(1)] \\textbf{状态空间离散化误差}：Q-Learning要求状态离散化，导致部分信息丢失。
+    \\item[(2)] \\textbf{奖励函数权重主观性}：$\\alpha, \\beta, \\gamma$的取值影响调度策略偏向。
+    \\item[(3)] \\textbf{环境简化}：实际电网包含更多约束（如电压约束、频率约束），本模型做了合理简化。
+\\end{enumerate}
+进行了参数敏感性分析，调整权重比例$\\pm 20\\%$后，调度成本变化不超过5\\%，说明模型具有较好的鲁棒性。

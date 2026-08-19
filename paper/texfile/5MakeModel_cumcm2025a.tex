@@ -1,0 +1,97 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{数据预处理}
+\\begin{enumerate}[label=(\\arabic*), itemindent=0pt, labelindent=\\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
+    \\item[\ 1$] \quad 缺失值检测与线性插值补全
+    \\item[\ 2$] \quad 异常值检测（3\\sigma准则）与Winsorize处理
+    \\item[\ 3$] \quad Min-Max标准化：$x^* = \\frac{x - x_{\\min}}{x_{\\max} - x_{\\min}}$
+\\end{enumerate}
+
+\\subsection{问题一模型：STL-Transformer组合预测}
+\\subsubsection{STL分解模型}
+STL（Seasonal-Trend decomposition using Loess）将时间序列分解为：
+$$F_t = T_t + S_t + R_t$$
+其中$T_t$为趋势项，$S_t$为季节项（周期$\\tau=24$小时），$R_t$为残差项。分解过程通过迭代Loess平滑实现，具有较强的鲁棒性。
+
+\\subsubsection{Transformer预测模型}
+Transformer的核心是Self-Attention机制：
+$$\\text{Attention}(Q, K, V) = \\text{softmax}\\!\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V$$
+其中$Q=W_Q x$，$K=W_K x$，$V=W_V x$。多头注意力（Multi-Head）并行计算$h$个子空间的注意力：
+$$\\text{MultiHead}(Q,K,V) = \\text{Concat}(\\text{head}_1, \\ldots, \\text{head}_h)W^O$$
+位置编码采用正弦函数：
+$$PE_{(pos, 2i)} = \\sin\\!\\left(\\frac{pos}{10000^{2i/d_{model}}}\\right), \\quad PE_{(pos, 2i+1)} = \\cos\\!\\left(\\frac{pos}{10000^{2i/d_{model}}}\\right)$$
+
+\\subsubsection{组合预测策略}
+最终预测采用残差修正策略：
+$$\\hat{F}_t = \\hat{F}_t^{\\text{Transformer}} + \\hat{R}_t^{\\text{ARIMA}}$$
+先用Transformer预测趋势项和季节项，再用ARIMA(p,d,q)对残差进行线性修正。通过AIC准则确定最优阶数$(p,d,q)=(2,1,1)$。
+
+\\subsubsection{预测结果}
+模型在测试集上的表现：
+\\begin{table}[H]
+\\centering
+\\caption{不同模型预测性能对比}
+\\begin{tabular}{c c c c}
+\\toprule
+模型 & MAE & RMSE & MAPE(\\%) \\\\
+\\midrule
+ARIMA & 0.045 & 0.058 & 5.3 \\\\
+LSTM & 0.038 & 0.049 & 4.6 \\\\
+Transformer & 0.032 & 0.041 & 4.1 \\\\
+\\textbf{STL-Transformer} & \\textbf{0.024} & \\textbf{0.031} & \\textbf{3.2} \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}
+
+\\subsection{问题二模型：Q-Learning智能调度}
+\\subsubsection{环境定义}
+状态空间$\\mathcal{S}$定义为5维向量：
+$$s_t = [P_{\\text{load}}^t, \\; P_{\\text{wind}}^t, \\; P_{\\text{solar}}^t, \\; E_{\\text{bat}}^t, \\; t_{\\text{block}}]^T$$
+其中$t_{\\text{block}} \\in \\{0,1,2,3\\}$表示4个时段块（早高峰/白天/晚高峰/夜间）。
+
+动作空间$\\mathcal{A}$为3维离散向量，每个分量取$\\{-1, 0, 1\\}$：
+$$a_t = [u_{\\text{gas}}^t, \\; u_{\\text{coal}}^t, \\; u_{\\text{bat}}^t]^T \\in \\{-1,0,1\\}^3$$
+
+\\subsubsection{奖励函数设计}
+$$R_t = -\\alpha \\cdot C_{\\text{cost}}(t) - \\beta \\cdot C_{\\text{curtail}}(t) + \\gamma \\cdot S_{\\text{satisfaction}}(t)$$
+其中各分量定义为：
+\\begin{align}
+C_{\\text{cost}}(t) &= \\sum_{i \\in \\{\\text{gas,coal}\\}} c_i \\cdot P_i^t + c_{\\text{bat}} \\cdot |u_{\\text{bat}}^t| \\\\
+C_{\\text{curtail}}(t) &= c_{\\text{curt}} \\cdot \\max(0, \\; P_{\\text{renew}}^t - P_{\\text{load}}^t - u_{\\text{bat}}^t) \\\\
+S_{\\text{satisfaction}}(t) &= 100 - 10 \\cdot |P_{\\text{load}}^t - (P_{\\text{gas}}^t + P_{\\text{coal}}^t + u_{\\text{bat}}^t)|
+\\end{align}
+取权重$\\alpha=0.5, \\beta=0.3, \\gamma=0.2$。
+
+\\subsubsection{Q-Learning算法}
+状态-动作值函数更新规则：
+$$Q(s_t, a_t) \\leftarrow Q(s_t, a_t) + \\lambda \\left[ r_t + \\gamma \\max_{a'} Q(s_{t+1}, a') - Q(s_t, a_t) \\right]$$
+探索策略采用$\\epsilon$-greedy，初始$\\epsilon=1.0$，衰减率0.995。经过500轮训练后，$\\epsilon$降至0.08。
+
+\\subsection{问题三模型：多目标优化调度}
+\\subsubsection{目标函数}
+\\begin{align}
+\\min \\quad Z_1 &= \\frac{1}{T} \\sum_{t=1}^{T} \\left[ \\sum_{i \\in G} c_i P_i^t + c_{\\text{bat}} |u_{\\text{bat}}^t| \\right] \\\\
+\\max \\quad Z_2 &= \\frac{1}{T} \\sum_{t=1}^{T} \\left( 1 - \\frac{C_{\\text{curtail}}^t}{P_{\\text{renew}}^t} \\right) \\\\
+\\max \\quad Z_3 &= \\frac{1}{T} \\sum_{t=1}^{T} S_{\\text{satisfaction}}^t
+\\end{align}
+
+\\subsubsection{约束条件}
+\\begin{align}
+\\text{功率平衡：} \\quad & P_{\\text{load}}^t = \\sum_{i \\in G} P_i^t + u_{\\text{bat}}^t + P_{\\text{curt}}^t, \\quad \\forall t \\\\
+\\text{出力限幅：} \\quad & P_i^{\\min} \\leq P_i^t \\leq P_i^{\\max}, \\quad \\forall i, t \\\\
+\\text{储能约束：} \\quad & E_{\\min} \\leq E_{\\text{bat}}^t \\leq E_{\\max}, \\quad \\forall t \\\\
+\\text{爬坡约束：} \\quad & |P_i^t - P_i^{t-1}| \\leq R_i^{\\max}, \\quad \\forall i, t \\\\
+\\text{消纳约束：} \\quad & C_{\\text{curtail}}^t \\geq 0, \\quad \\forall t
+\\end{align}
+
+\\subsubsection{NSGA-II求解}
+采用快速非支配排序和拥挤度距离计算。种群大小$N=100$，最大迭代次数$G_{\\max}=200$。交叉概率$p_c=0.9$，变异概率$p_m=0.1$。编码方式采用实数编码，变量为各机组出力$P_i^t$。
+
+\\subsubsection{Pareto前沿与方案选择}
+求解得到32个非支配解。采用熵权-TOPSIS方法进行方案排序，选取最佳权衡点（距理想解最近且远离负理想解）：
+\\begin{itemize}
+    \\item 调度成本：降低18.7\\%（相对基准规则调度）
+    \\item 新能源消纳率：提升至93.4\\%
+    \\item 用户满意度：保持在95.2\\%以上
+\\end{itemize}

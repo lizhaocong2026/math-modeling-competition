@@ -41,3 +41,7 @@ from .lstm import LSTM, GRU
 from .prophet import ProphetDecompose, HarmonicRegression
 from .mcdm_advanced import VIKOR, PROMETHEE, ELECTRE
 from .simulation import DiscreteEventSimulation, QueueingSystem, InventorySystem
+
+from .diffusion import SimpleDiffusion, DiffusionEnsemble
+from .mamba import SimpleSSM, MambaBlock
+
