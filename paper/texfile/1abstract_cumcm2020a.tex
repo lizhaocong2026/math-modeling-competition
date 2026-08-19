@@ -1,0 +1,17 @@
+\\maketitle
+\\begin{abstract}
+    本文针对2020年CUMCM A题停车场定价与车位分配问题，建立了基于博弈论的停车价格策略优化模型。首先分析车主停车行为特征和停车场运营现状；其次构建运营商与车主之间的Stackelberg博弈模型；最后求解均衡解并验证模型有效性。
+    
+    \\textbf{针对问题一}，我们分析了车主停车行为。通过问卷调查和数据分析，建立选择概率模型：
+    $$P_i = \\frac{e^{\\alpha - \\beta c_i}}{\\sum_j e^{\\alpha - \\beta c_j}}$$
+    其中$c_i$为停车场$i$的收费标准。
+    
+    \\textbf{针对问题二}，我们建立了Stackelberg主从博弈模型。运营商作为领导者制定价格策略，车主作为追随者选择停车场。Stackelberg均衡满足：
+    $$\\max_{p} \\pi_1(p, q^*(p)) \\quad \\text{s.t.} \\quad q^* \\in \\arg\\max_q \\pi_2(p, q)$$
+    
+    \\textbf{针对问题三}，我们进行了灵敏度分析。分析结果表明，当需求弹性系数增加10\\%时，最优价格下降约5\\%。模型具有良好的鲁棒性。
+    
+    本研究为停车场智能定价提供了理论框架和决策工具。
+    
+    \\keywords{停车场定价\quad Stackelberg博弈\quad 用户选择模型\quad 演化博弈\quad 智能停车}
+\\end{abstract}
