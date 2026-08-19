@@ -17,7 +17,7 @@ class TestDiffusionModel(unittest.TestCase):
         X = np.random.rand(30, 1)
         result = model.fit(X, epochs=10)
         self.assertEqual(result['status'], 'success')
-        self.assertIn('loss', result)
+        self.assertIn('final_loss', result)
 
 
 class TestMambaModel(unittest.TestCase):
