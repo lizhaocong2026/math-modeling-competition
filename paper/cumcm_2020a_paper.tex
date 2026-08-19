@@ -1,4 +1,3 @@
-% CUMCM 2020 A题 - 停车费定价与车位分配优化
 \documentclass[withoutpreface,bwprint]{cumcmthesis}
 \usepackage{ctex}
 \usepackage{geometry}
@@ -6,26 +5,41 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{bm}
+\usepackage{siunitx}
 \usepackage{graphicx}
 \graphicspath{{figures/}}
 \usepackage{float}
 \usepackage{subcaption}
 \usepackage{booktabs}
+\usepackage{multirow}
 \usepackage{array}
+\usepackage{algorithm}
+\usepackage{algorithmic}
 \usepackage{xcolor}
+\usepackage{listings}
+\lstset{
+    numbers=left,
+    showspaces=false,
+    numberstyle=\tiny\ttfamily,
+    breaklines=true,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{magenta},
+    commentstyle=\color{green}\itshape
+}
 \usepackage{hyperref}
 \hypersetup{hidelinks, colorlinks=false}
 
-\title{基于博弈论的停车场定价策略与车位分配优化}
+\title{基于非线性规划的停车场定价与车位分配优化研究}
 \tihao{A}
-\baominghao{0003}
+\baominghao{0001}
 \schoolname{示例大学}
-\yearinput{2020}
+\yearinput{202r}
 \monthinput{09}
 \dayinput{03}
 
 \begin{document}
-\input{texfile/1abstract_cumcm2020a}
+\input{1abstract_cumcm2020a}
 \input{texfile/2ProblemRestatement}
 \input{texfile/3ProblemAnalysis}
 \input{texfile/4AssumptionAndSign}

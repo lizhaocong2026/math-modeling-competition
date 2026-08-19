@@ -55,3 +55,6 @@ from .xgboost_ensemble import XGBoostRegressor, GradientBoostingEnsemble
 from .gnn_improved import ImprovedGCN, SpatialTemporalGNN
 
 from .prophet_ensemble import ProphetModel, ProphetDecompose, AutoMLPipeline
+
+from .particle_filter import ExtendedKalmanFilter, ParticleFilter
+from .spatial_advanced import OrdinaryKriging, SpatialRegression
