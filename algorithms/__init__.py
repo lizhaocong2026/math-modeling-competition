@@ -45,3 +45,8 @@ from .simulation import DiscreteEventSimulation, QueueingSystem, InventorySystem
 from .diffusion import SimpleDiffusion, DiffusionEnsemble
 from .mamba import SimpleSSM, MambaBlock
 
+
+from .ga_improved import AdaptiveGeneticAlgorithm, NSGA2Improved
+from .sa_improved import SimulatedAnnealing, TabuSearch
+from .cnn_lstm import CNNLSTM, TCN
+from .bayesian_opt import BayesianOptimization, StackingEnsemble
