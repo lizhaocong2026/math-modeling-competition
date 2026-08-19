@@ -17,9 +17,9 @@ class TestDiffusionModel(unittest.TestCase):
         model = SimpleDiffusion(n_features=1, T=50)
         X = np.random.rand(30, 1)
         y = np.random.rand(30)
-        result = model.fit(X, y)
+        result = model.fit(X, epochs=10)
         self.assertEqual(result['status'], 'success')
-        pred = model.predict(X)
+        samples = model.generate(10)
         self.assertEqual(len(pred), 30)
 
 
@@ -36,7 +36,7 @@ class TestMambaModel(unittest.TestCase):
         y = np.random.rand(20).astype(np.float32)
         result = model.fit(X, y, epochs=5)
         self.assertEqual(result['status'], 'success')
-        pred = model.predict(X)
+        samples = model.generate(10)
         self.assertEqual(len(pred), 20)
 
 
@@ -44,7 +44,7 @@ class TestAttentionLayer(unittest.TestCase):
     def test_attention_init(self):
         from algorithms.attention import SelfAttention
         layer = SelfAttention(d_model=64, nhead=4)
-        self.assertEqual(layer.n_heads, 4)
+        self.assertEqual(layer.nhead, 4)
     
     def test_attention_forward(self):
         from algorithms.attention import SelfAttention
