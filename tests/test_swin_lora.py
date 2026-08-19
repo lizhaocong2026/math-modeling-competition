@@ -18,15 +18,15 @@ class TestSwinTransformer(unittest.TestCase):
         self.assertEqual(output.shape, (10, 8, 32))
 
 
-class TestLoRA(unittest.TestCase):
+class TestNeuralNetwork(unittest.TestCase):
     def test_lora_init(self):
         from algorithms.lora import NeuralNetwork
-        model = NeuralNetwork()
+        model = NeuralNetwork([64, 32, 1])
         self.assertIsNotNone(model)
     
     def test_lora_forward(self):
         from algorithms.lora import NeuralNetwork
-        model = NeuralNetwork()
+        model = NeuralNetwork([64, 32, 1])
         X = np.random.rand(50, 64)
         pred = model.forward(X)
         self.assertEqual(pred.shape, (50, 1))
