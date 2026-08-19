@@ -1,0 +1,24 @@
+\newpage
+\section{假设与符号说明}
+
+\subsection{假设}
+\begin{itemize}
+\item 交通流量在相邻时间点具有连续性
+\item 道路结构在预测时段内不变
+\item 传感器数据质量可靠，缺失值可通过插值补全
+\item 工作日与周末交通模式存在显著差异
+\end{itemize}
+
+\subsection{符号说明}
+\begin{tabular}{lll}
+\hline
+\symbol & definition & unit
+\hline
+v_i & 交叉口节点i & -
+e_ij & 连接节点i,j的边 & -
+X_v & 节点v的特征向量 & -
+h_v^{(l)} & 节点v在第l层的消息嵌入 & -
+N(v) & 节点v的邻居集合 & -
+hat{y}_t & t时刻的预测流量 & veh/min
+\hline
+\end{tabular}

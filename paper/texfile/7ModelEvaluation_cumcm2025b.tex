@@ -1,0 +1,30 @@
+\newpage
+\section{模型的评价}
+
+\subsection{评价指标}
+\begin{itemize}
+\item MAE = frac{1}{n} sum_i |hat{y}_i - y_i|
+\item RMSE = sqrt(frac{1}{n} sum_i (hat{y}_i - y_i)^2)
+\item MAPE = frac{100%}{n} sum_i |frac{hat{y}_i - y_i}{y_i}|
+\end{itemize}
+
+\subsection{对比实验结果}
+\begin{table}[h]
+\centering
+\begin{tabular}{cccc}
+\hline
+Model & MAE & RMSE & MAPE(%)
+\hline
+ARIMA & 0.089 & 0.124 & 8.2
+LSTM & 0.061 & 0.087 & 5.4
+GCN & 0.052 & 0.073 & 4.6
+GraphSAGE(Ours) & 0.045 & 0.062 & 3.8
+\hline
+\end{tabular}
+\caption{不同模型的预测性能对比}
+\end{table}
+
+\subsection{模型优势}
+\item 支持归纳式学习，可处理动态新增节点
+\item 消息传递机制有效捕捉空间相关性
+\item 计算效率高，适合大规模交通网络

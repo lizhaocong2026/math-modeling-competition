@@ -1,0 +1,21 @@
+\newpage
+\section{模型的建立与求解}
+
+\subsection{问题一的图构建模型}
+定义城市交通图为有向加权图G=(V,E,W)，其中V为交叉口集合，E为路段集合。
+节点特征矩阵X in R^(n x d)，邻接矩阵A in R^(n x n)。
+对于节点v_i，其邻居集合N(v_i)由距离阈值或K近邻确定。
+
+\subsection{问题二的GraphSAGE预测模型}
+采用两层GraphSAGE聚合器：
+第一层：聚合直接邻居信息，学习局部结构特征
+第二层：聚合二阶邻居信息，学习全局结构特征
+最终节点嵌入h_v用于交通流预测：
+hat{y}_v = W_out · h_v^{(2)} + b_out
+损失函数采用MSE：
+L = frac{1}{|V_train|} sum_{v in V_train}(hat{y}_v - y_v)^2
+
+\subsection{问题三的求解算法}
+采用Adam优化器，学习率1e-3，batch_size=256。
+训练30个epoch，早停patience=5。
+Python实现使用PyTorch Geometric库。

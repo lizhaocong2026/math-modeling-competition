@@ -1,0 +1,25 @@
+\newpage
+\section{模型的误差分析}
+
+\subsection{误差来源分析}
+\itemize
+\item 传感器噪声：检测器误差导致数据偏差
+\item 模型泛化：工作日/周末模式差异未充分建模
+\item 计算精度：浮点数运算引入的舍入误差
+\end itemize
+
+\subsection{灵敏度分析}
+对超参数进行灵敏度分析：
+\begin{table}[h]
+\centering
+\begin{tabular}{ccc}
+\hline
+Layer & Learning Rate & MAE
+\hline
+1 & 1e-3 & 0.052
+2 & 1e-3 & 0.045
+3 & 1e-3 & 0.048
+\hline
+\end{tabular}
+\caption{不同层数的模型性能}
+\end{table}
