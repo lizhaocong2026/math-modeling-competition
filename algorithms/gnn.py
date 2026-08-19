@@ -1,157 +1,203 @@
-"""
-Graph Neural Network (GNN) for spatial-temporal prediction
-Simplified GCN implementation for math modeling competitions
+﻿"""
+图论与网络分析
+用于交通网络、社交网络等问题
 """
 import numpy as np
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, List, Tuple, Optional
+import heapq
 
 
-class SimpleGCN:
-    """
-    Simplified Graph Convolutional Network for spatial data
+class Graph:
+    """图数据结构"""
     
-    Suitable for: 空间数据分析、交通网络预测、地理信息系统
-    """
-    
-    def __init__(self, n_features: int, n_hidden: int = 64, n_classes: int = 1):
-        self.n_features = n_features
-        self.n_hidden = n_hidden
-        self.n_classes = n_classes
-        self.W1 = np.random.randn(n_features, n_hidden) * 0.01
-        self.W2 = np.random.randn(n_hidden, n_classes) * 0.01
+    def __init__(self, n_nodes: int):
+        self.n = n_nodes
+        self.adjacency = {}
+        self.weights = {}
         
-    def _relu(self, x: np.ndarray) -> np.ndarray:
-        return np.maximum(0, x)
+        for i in range(n_nodes):
+            self.adjacency[i] = []
+            self.weights[i] = {}
     
-    def _softmax(self, x: np.ndarray) -> np.ndarray:
-        e_x = np.exp(x - np.max(x, axis=-1, keepdims=True))
-        return e_x / e_x.sum(axis=-1, keepdims=True)
+    def add_edge(self, u: int, v: int, weight: float = 1.0):
+        """添加边"""
+        self.adjacency[u].append(v)
+        self.adjacency[v].append(u)
+        self.weights[u][v] = weight
+        self.weights[v][u] = weight
     
-    def forward(self, X: np.ndarray, A: np.ndarray) -> np.ndarray:
+    def dijkstra(self, source: int) -> Tuple[np.ndarray, np.ndarray]:
         """
-        Forward pass through GCN
+        Dijkstra最短路径算法
         
-        Args:
-            X: Node features (n_nodes, n_features)
-            A: Adjacency matrix (n_nodes, n_nodes)
+        参数:
+            source: 源节点
             
-        Returns:
-            Predictions (n_nodes, n_classes)
+        返回:
+            (距离数组, 前驱节点数组)
         """
-        # Normalize adjacency matrix
-        D = np.sum(A, axis=1)
-        D_inv_sqrt = np.where(D > 0, 1.0 / np.sqrt(D), 0)
-        D_inv_sqrt[np.isinf(D_inv_sqrt)] = 0
-        D_inv_sqrt[np.isnan(D_inv_sqrt)] = 0
-        A_norm = D_inv_sqrt[:, None] * A * D_inv_sqrt[None, :]
+        dist = np.inf * np.ones(self.n)
+        prev = np.ones(self.n) * -1
+        dist[source] = 0
         
-        # GCN layer 1
-        H1 = self._relu(A_norm @ X @ self.W1)
-        # GCN layer 2
-        Z = A_norm @ H1 @ self.W2
+        pq = [(0, source)]
         
-        return Z
-    
-    def fit(self, X: np.ndarray, A: np.ndarray, y: np.ndarray, 
-            epochs: int = 50, lr: float = 0.01) -> Dict[str, Any]:
-        """
-        Train GCN model
-        
-        Args:
-            X: Node features
-            A: Adjacency matrix
-            y: Labels
-            epochs: Training epochs
-            lr: Learning rate
+        while pq:
+            d, u = heapq.heappop(pq)
             
-        Returns:
-            Training result dictionary
-        """
-        self.history = []
-        loss = 0.0
-        
-        for epoch in range(epochs):
-            Z = self.forward(X, A)
-            loss = np.mean((Z - y) ** 2)
-            self.history.append(loss)
+            if d > dist[u]:
+                continue
             
-            # Simple gradient update
-            grad_scale = lr * loss
-            self.W1 += np.random.randn(*self.W1.shape) * grad_scale
-            self.W2 += np.random.randn(*self.W2.shape) * grad_scale
+            for v in self.adjacency[u]:
+                new_dist = dist[u] + self.weights[u].get(v, 1)
+                if new_dist < dist[v]:
+                    dist[v] = new_dist
+                    prev[v] = u
+                    heapq.heappush(pq, (new_dist, v))
         
-        return {"status": "success", "final_loss": float(loss), "epochs": epochs}
+        return dist, prev
     
-    def predict(self, X: np.ndarray, A: np.ndarray) -> np.ndarray:
-        return self.forward(X, A)
+    def bfs(self, source: int) -> np.ndarray:
+        """BFS遍历"""
+        visited = np.zeros(self.n, dtype=bool)
+        order = []
+        queue = [source]
+        visited[source] = True
+        
+        while queue:
+            u = queue.pop(0)
+            order.append(u)
+            
+            for v in self.adjacency[u]:
+                if not visited[v]:
+                    visited[v] = True
+                    queue.append(v)
+        
+        return np.array(order)
     
-    def get_params(self) -> Dict[str, int]:
+    def dfs(self, source: int) -> np.ndarray:
+        """DFS遍历"""
+        visited = np.zeros(self.n, dtype=bool)
+        order = []
+        
+        def _dfs(u):
+            visited[u] = True
+            order.append(u)
+            for v in self.adjacency[u]:
+                if not visited[v]:
+                    _dfs(v)
+        
+        _dfs(source)
+        return np.array(order)
+
+
+class NetworkFlow:
+    """网络流问题"""
+    
+    @staticmethod
+    def ford_fulkerson(capacity: np.ndarray, source: int, sink: int) -> Dict[str, Any]:
+        """
+        Ford-Fulkerson最大流算法
+        
+        参数:
+            capacity: 容量矩阵
+            source: 源点
+            sink: 汇点
+            
+        返回:
+            最大流结果
+        """
+        n = capacity.shape[0]
+        residual = capacity.copy()
+        flow = np.zeros_like(capacity)
+        
+        def bfs_path():
+            visited = np.zeros(n, dtype=bool)
+            parent = np.ones(n) * -1
+            queue = [source]
+            visited[source] = True
+            
+            while queue:
+                u = queue.pop(0)
+                for v in range(n):
+                    if not visited[v] and residual[u, v] > 0:
+                        visited[v] = True
+                        parent[v] = u
+                        if v == sink:
+                            return parent
+                        queue.append(v)
+            return None
+        
+        max_flow = 0
+        while True:
+            parent = bfs_path()
+            if parent is None:
+                break
+            
+            # 找增广路径的最小容量
+            path_flow = np.inf
+            v = sink
+            while v != source:
+                u = parent[v]
+                path_flow = min(path_flow, residual[u, v])
+                v = u
+            
+            # 更新残留网络
+            v = sink
+            while v != source:
+                u = parent[v]
+                residual[u, v] -= path_flow
+                residual[v, u] += path_flow
+                flow[u, v] += path_flow
+                flow[v, u] -= path_flow
+                v = u
+            
+            max_flow += path_flow
+        
         return {
-            "n_features": self.n_features,
-            "n_hidden": self.n_hidden,
-            "n_classes": self.n_classes
+            "max_flow": max_flow,
+            "flow_matrix": flow,
+            "residual_matrix": residual
         }
 
 
-class SpatialTemporalGCN:
-    """
-    Spatio-Temporal GCN for traffic flow prediction
+class PageRank:
+    """PageRank算法"""
     
-    Combines graph convolution with temporal modeling
-    """
-    
-    def __init__(self, n_nodes: int, n_features: int, seq_len: int = 12):
-        self.n_nodes = n_nodes
-        self.n_features = n_features
-        self.seq_len = seq_len
-        
-        # Learnable parameters
-        self.W_spatial = np.random.randn(n_features, 32) * 0.01
-        self.W_temporal = np.random.randn(32 * seq_len, 16) * 0.01
-        self.W_output = np.random.randn(16, 1) * 0.01
-        
-    def forward(self, X: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def compute(adjacency: np.ndarray, damping: float = 0.85,
+                max_iter: int = 100, tol: float = 1e-6) -> np.ndarray:
         """
-        Forward pass
+        计算PageRank
         
-        Args:
-            X: Input tensor (batch, seq_len, n_nodes, n_features)
+        参数:
+            adjacency: 邻接矩阵
+            damping: 阻尼系数
+            max_iter: 最大迭代次数
+            tol: 收敛容差
             
-        Returns:
-            Predictions (batch, n_nodes)
+        返回:
+            PageRank向量
         """
-        batch_size = X.shape[0]
+        n = adjacency.shape[0]
+        out_degree = adjacency.sum(axis=1)
         
-        # Spatial convolution
-        X_spatial = np.matmul(X, self.W_spatial)  # (batch, seq_len, n_nodes, 32)
+        # 构建转移矩阵
+        M = np.zeros((n, n))
+        for i in range(n):
+            if out_degree[i] > 0:
+                for j in range(n):
+                    if adjacency[j, i] > 0:
+                        M[j, i] = adjacency[j, i] / out_degree[i]
         
-        # Flatten temporal dimension
-        X_flat = X_spatial.reshape(batch_size, -1)  # (batch, seq_len * 32)
+        # 迭代计算
+        rank = np.ones(n) / n
         
-        # Temporal processing
-        X_temporal = np.matmul(X_flat, self.W_temporal)  # (batch, 16)
-        
-        # Output
-        predictions = np.matmul(X_temporal, self.W_output)  # (batch, 1)
-        
-        return predictions.flatten()
-    
-    def fit(self, X: np.ndarray, y: np.ndarray, epochs: int = 30, 
-            lr: float = 0.001) -> Dict[str, Any]:
-        self.history = []
-        loss = 0.0
-        
-        for epoch in range(epochs):
-            predictions = self.forward(X)
-            loss = np.mean((predictions - y) ** 2)
-            self.history.append(loss)
+        for _ in range(max_iter):
+            new_rank = (1 - damping) / n + damping * M @ rank
             
-            grad_scale = lr * loss
-            self.W_spatial += np.random.randn(*self.W_spatial.shape) * grad_scale
-            self.W_temporal += np.random.randn(*self.W_temporal.shape) * grad_scale
-            self.W_output += np.random.randn(*self.W_output.shape) * grad_scale
+            if np.linalg.norm(new_rank - rank, 1) < tol:
+                break
+            rank = new_rank
         
-        return {"status": "success", "final_loss": float(loss), "epochs": epochs}
-    
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        return self.forward(X)
+        return rank
