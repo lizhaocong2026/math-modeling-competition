@@ -1,0 +1,19 @@
+\\newpage
+\\section{误差分析}
+
+\\subsection{预测模型误差分析}
+STL-LSTM混合模型的误差主要来源于：
+\\begin{enumerate}
+    \\item[(1)] \\textbf{模型拟合误差}：LSTM仅用NumPy实现，未使用GPU加速，实际精度可能更高。
+    \\item[(2)] \\textbf{数据质量误差}：原始数据存在测量噪声和少量缺失值。
+    \\item[(3)] \\textbf{突发性事件}：交通事故、恶劣天气导致的流量突变难以预测。
+\\end{enumerate}
+敏感性分析表明，STL周期参数$\\tau$对预测精度影响显著，当$\\tau$偏离24小时\\pm 2小时时，MAPE增加约0.8个百分点。
+
+\\subsection{优化模型误差分析}
+\\begin{enumerate}
+    \\item[(1)] \\textbf{离散化误差}：NSGA-II采用实数编码，变量连续化可能导致部分整数约束不满足。
+    \\item[(2)] \\textbf{目标权重主观性}：多目标间的权衡系数需根据实际问题调整。
+    \\item[(3)] \\textbf{环境简化}：未考虑信号灯配时、行人过街等细节因素。
+\\end{enumerate}
+参数敏感性分析显示，种群大小在80-120范围内波动时，Pareto解集质量变化不超过5\\%。

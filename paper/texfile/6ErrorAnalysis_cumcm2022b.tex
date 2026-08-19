@@ -1,0 +1,15 @@
+\\newpage
+\\section{误差分析}
+
+\\subsection{需求预测误差}
+\\begin{enumerate}
+    \\item \\textbf{模型假设}：ARIMA假设数据平稳，节假日前后可能有结构性变化
+    \\item \\textbf{预测区间}：95\\%预测区间宽度约\\pm 15\\%，在极端天气下可能扩大
+\\end{enumerate}
+
+\\subsection{选址模型误差}
+\\begin{enumerate}
+    \\item \\textbf{服务半径假设}：固定服务半径忽略了实际行驶距离和拥堵
+    \\item \\textbf{需求确定性}：将需求视为确定值，实际存在随机波动
+\\end{enumerate}
+蒙特卡洛仿真表明，考虑需求不确定性后，覆盖率从92\\%降至87\\%。

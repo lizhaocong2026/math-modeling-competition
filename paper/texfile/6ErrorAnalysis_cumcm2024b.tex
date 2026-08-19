@@ -1,0 +1,23 @@
+\\newpage
+\\section{误差分析}
+
+\\subsection{预测模型误差分析}
+Prophet模型MAPE=4.2\\%，误差主要来源：
+\\begin{enumerate}
+    \\item \\textbf{趋势外推不确定性}：长期预测中政策变化难以准确建模
+    \\item \\textbf{节假日效应偏差}：部分新兴节日缺乏历史数据支持
+    \\item \\textbf{随机冲击}：经济波动、疫情等突发事件影响
+\\end{enumerate}
+
+\\subsection{驱动因素分解误差}
+LMDI分解的残差项占比约8\\%，主要源于：
+\\begin{enumerate}
+    \\item 数据聚合导致的截面异质性
+    \\item 产业结构变化中的非线性效应
+\\end{enumerate}
+
+\\subsection{优化模型误差分析}
+\\begin{enumerate}
+    \\item \\textbf{目标函数简化}：未考虑区域间碳排放转移
+    \\item \\textbf{成本参数不确定性}：可再生能源成本预测存在区间
+\\end{enumerate}

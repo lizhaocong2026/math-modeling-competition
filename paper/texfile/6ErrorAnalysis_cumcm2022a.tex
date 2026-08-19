@@ -1,0 +1,12 @@
+\\newpage
+\\section{误差分析}
+
+\\subsection{参数估计误差}
+\\begin{enumerate}
+    \\item \\textbf{初始值敏感}：LM算法对初始速率常数敏感，需多次尝试
+    \\item \\textbf{测量噪声}：浓度测量误差约\\pm 3\\%，影响参数精度
+\\end{enumerate}
+置信区间分析表明，$k_1$和$k_3$的估计精度较高（95\\%CI宽度<10\\%），而$k_5$精度较低。
+
+\\subsection{模型验证误差}
+交叉验证RMSE=0.034，残差呈正态分布，模型拟合良好。

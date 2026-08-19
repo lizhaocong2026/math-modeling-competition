@@ -1,0 +1,15 @@
+\\newpage
+\\section{误差分析}
+
+\\subsection{能耗分解误差}
+\\begin{enumerate}
+    \\item \\textbf{传感器误差}：温度、功率测量存在\\pm 2\\%精度限制
+    \\item \\textbf{模型简化}：冷却系统效率曲线采用分段线性近似
+\\end{enumerate}
+
+\\subsection{强化学习误差}
+\\begin{enumerate}
+    \\item \\textbf{状态离散化}：连续状态离散化导致信息丢失
+    \\item \\textbf{仿真-现实gap}：仿真环境与真实数据中心的差异
+\\end{enumerate}
+MADDPG算法在500轮训练后reward曲线趋于平稳，但实际部署时需进一步调优。

@@ -53,3 +53,5 @@ from .bayesian_opt import BayesianOptimization, StackingEnsemble
 
 from .xgboost_ensemble import XGBoostRegressor, GradientBoostingEnsemble
 from .gnn_improved import ImprovedGCN, SpatialTemporalGNN
+
+from .prophet_ensemble import ProphetModel, ProphetDecompose, AutoMLPipeline
