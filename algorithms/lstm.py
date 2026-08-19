@@ -1,201 +1,261 @@
-﻿"""
-LSTM (长短期记忆网络) - 纯NumPy实现
-用于时间序列预测和序列建模
+"""
+LSTM (Long Short-Term Memory) network for time series prediction
+Pure NumPy implementation for math modeling competitions
 """
 import numpy as np
-from typing import List, Tuple, Dict, Any, Optional
+from typing import Dict, Any, List
 
 
 class LSTM:
-    """长短期记忆网络实现"""
+    """
+    LSTM network for sequence prediction
     
-    def __init__(self, input_size: int, hidden_size: int, output_size: int, 
-                 learning_rate: float = 0.01, verbose: bool = False):
-        """
-        初始化LSTM
-        
-        参数:
-            input_size: 输入维度
-            hidden_size: 隐藏层维度
-            output_size: 输出维度
-            learning_rate: 学习率
-            verbose: 是否打印训练信息
-        """
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.output_size = output_size
-        self.learning_rate = learning_rate
-        self.verbose = verbose
-        
-        # 初始化权重
-        scale = 1.0 / np.sqrt(hidden_size)
-        self.W_f = np.random.randn(hidden_size, hidden_size + input_size) * scale
-        self.W_i = np.random.randn(hidden_size, hidden_size + input_size) * scale
-        self.W_o = np.random.randn(hidden_size, hidden_size + input_size) * scale
-        self.W_c = np.random.randn(hidden_size, hidden_size + input_size) * scale
-        
-        self.b_f = np.zeros((hidden_size, 1))
-        self.b_i = np.zeros((hidden_size, 1))
-        self.b_o = np.zeros((hidden_size, 1))
-        self.b_c = np.zeros((hidden_size, 1))
-        
-        # 输出层权重
-        self.W_y = np.random.randn(output_size, hidden_size) * scale
-        self.b_y = np.zeros((output_size, 1))
-        
-        self.loss_history = []
+    Suitable for: B题时间序列预测、股票预测、交通流量预测
+    """
     
+    def __init__(self, input_dim: int = 1, hidden_dim: int = 64, 
+                 output_dim: int = 1, seq_len: int = 24):
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+        self.output_dim = output_dim
+        self.seq_len = seq_len
+        
+        # Forget gate
+        self.Wf = np.random.randn(hidden_dim, input_dim + hidden_dim) * 0.01
+        self.bf = np.zeros(hidden_dim)
+        
+        # Input gate
+        self.Wi = np.random.randn(hidden_dim, input_dim + hidden_dim) * 0.01
+        self.bi = np.zeros(hidden_dim)
+        
+        # Cell candidate
+        self.Wc = np.random.randn(hidden_dim, input_dim + hidden_dim) * 0.01
+        self.bc = np.zeros(hidden_dim)
+        
+        # Output gate
+        self.Wo = np.random.randn(hidden_dim, input_dim + hidden_dim) * 0.01
+        self.bo = np.zeros(hidden_dim)
+        
+        # Output layer
+        self.Wy = np.random.randn(output_dim, hidden_dim) * 0.01
+        self.by = np.zeros(output_dim)
+        
     def _sigmoid(self, x: np.ndarray) -> np.ndarray:
         return 1 / (1 + np.exp(-np.clip(x, -500, 500)))
     
     def _tanh(self, x: np.ndarray) -> np.ndarray:
         return np.tanh(x)
     
-    def forward(self, X: np.ndarray) -> Dict[str, np.ndarray]:
-        """前向传播"""
-        T = X.shape[0]
-        h = np.zeros((self.hidden_size, 1))
-        c = np.zeros((self.hidden_size, 1))
+    def _forward_step(self, x_t: np.ndarray, h_prev: np.ndarray, 
+                      c_prev: np.ndarray):
+        """Forward pass for one time step"""
+        xh = np.concatenate([x_t, h_prev])
         
-        gates = {'forget': [], 'input': [], 'output': [], 'cell': [],
-                 'h': [h.copy()], 'c': [c.copy()]}
+        f = self._sigmoid(xh @ self.Wf.T + self.bf)
+        i = self._sigmoid(xh @ self.Wi.T + self.bi)
+        c = self._tanh(xh @ self.Wc.T + self.bc)
+        o = self._sigmoid(xh @ self.Wo.T + self.bo)
         
-        for t in range(T):
-            x_t = X[t].reshape(-1, 1)
-            concat = np.vstack((h, x_t))
-            
-            f_t = self._sigmoid(self.W_f @ concat + self.b_f)
-            i_t = self._sigmoid(self.W_i @ concat + self.b_i)
-            o_t = self._sigmoid(self.W_o @ concat + self.b_o)
-            c_tilde = self._tanh(self.W_c @ concat + self.b_c)
-            
-            c = f_t * c + i_t * c_tilde
-            h = o_t * self._tanh(c)
-            
-            gates['forget'].append(f_t)
-            gates['input'].append(i_t)
-            gates['output'].append(o_t)
-            gates['cell'].append(c_tilde)
-            gates['h'].append(h.copy())
-            gates['c'].append(c.copy())
+        c_t = f * c_prev + i * c
+        h_t = o * self._tanh(c_t)
         
-        y = self.W_y @ h + self.b_y
-        return {'y': y, 'h': h, 'c': c, 'gates': gates}
+        return h_t, c_t, (x_t, h_prev, c_prev, xh, f, i, c, o, c_t)
     
     def predict(self, X: np.ndarray) -> np.ndarray:
-        result = self.forward(X)
-        return result['y'].flatten()
+        """
+        Predict using trained LSTM
+        
+        Args:
+            X: Input array (n_samples, seq_len, input_dim) or (seq_len, input_dim)
+            
+        Returns:
+            Predictions
+        """
+        if X.ndim == 2:
+            X = X.reshape(1, *X.shape)
+        
+        predictions = []
+        for sample in X:
+            h = np.zeros(self.hidden_dim)
+            c = np.zeros(self.hidden_dim)
+            
+            for t in range(min(self.seq_len, len(sample))):
+                h, c, _ = self._forward_step(sample[t], h, c)
+            
+            pred = h @ self.Wy.T + self.by
+            predictions.append(pred)
+        
+        return np.array(predictions).flatten()
     
-    def fit(self, X: np.ndarray, y: np.ndarray, epochs: int = 100, 
-            verbose: Optional[bool] = None) -> Dict[str, List]:
-        """训练LSTM (简化版使用数值梯度)"""
-        if verbose is None:
-            verbose = self.verbose
+    def fit(self, X: np.ndarray, y: np.ndarray, epochs: int = 20, 
+            lr: float = 0.001) -> Dict[str, Any]:
+        """
+        Train LSTM model
         
-        if y.ndim == 1:
-            y = y.reshape(-1, 1)
-        
-        history = {'loss': []}
+        Args:
+            X: Training data (n_samples, seq_len, input_dim)
+            y: Targets (n_samples,)
+            epochs: Training epochs
+            lr: Learning rate
+            
+        Returns:
+            Training result
+        """
+        self.history = []
+        loss = 0.0
         
         for epoch in range(epochs):
-            result = self.forward(X)
-            y_pred = result['y']
-            loss = np.mean((y_pred - y) ** 2)
-            history['loss'].append(loss)
+            total_loss = 0
+            for i in range(len(X)):
+                sample = X[i]
+                target = y[i]
+                
+                # Forward pass
+                h = np.zeros(self.hidden_dim)
+                c = np.zeros(self.hidden_dim)
+                
+                for t in range(min(self.seq_len, len(sample))):
+                    h, c, _ = self._forward_step(sample[t], h, c)
+                
+                # Output
+                pred = h @ self.Wy.T + self.by
+                error = pred - target
+                
+                # Update output layer
+                self.Wy += lr * np.outer(error, h)
+                self.by += lr * error
+                
+                total_loss += error ** 2
             
-            if verbose and epoch % 50 == 0:
-                print(f"Epoch {epoch}: loss = {loss:.6f}")
-            
-            self._backprop(X, y, result)
+            loss = total_loss / len(X)
+            self.history.append(loss)
         
-        return history
+        return {"status": "success", "final_loss": float(loss), "epochs": epochs}
     
-    def _backprop(self, X: np.ndarray, y: np.ndarray, result: Dict):
-        """反向传播 (简化实现)"""
-        gates = result['gates']
-        h = result['h']
-        c = result['c']
-        y_pred = result['y']
-        
-        dy = 2 * (y_pred - y) / y.shape[1]
-        dW_y = dy @ h.T
-        db_y = dy
-        
-        dh = dy @ self.W_y
-        dc = dh * (1 - self._tanh(c) ** 2) * gates['output'][-1]
-        
-        self.W_y -= self.learning_rate * dW_y
-        self.b_y -= self.learning_rate * db_y
+    def get_params(self) -> Dict[str, int]:
+        return {
+            "input_dim": self.input_dim,
+            "hidden_dim": self.hidden_dim,
+            "output_dim": self.output_dim,
+            "seq_len": self.seq_len
+        }
+
+
+class GRU:
+    """
+    Gated Recurrent Unit (GRU) - simplified LSTM variant
+    """
     
-    def predict_sequence(self, X: np.ndarray, steps: int = 10) -> np.ndarray:
-        """多步预测"""
+    def __init__(self, input_dim: int = 1, hidden_dim: int = 64, 
+                 output_dim: int = 1, seq_len: int = 24):
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+        self.output_dim = output_dim
+        self.seq_len = seq_len
+        
+        # Update gate
+        self.Wz = np.random.randn(hidden_dim, input_dim + hidden_dim) * 0.01
+        self.bz = np.zeros(hidden_dim)
+        
+        # Reset gate
+        self.Wr = np.random.randn(hidden_dim, input_dim + hidden_dim) * 0.01
+        self.br = np.zeros(hidden_dim)
+        
+        # Candidate hidden state
+        self.Wh = np.random.randn(hidden_dim, input_dim + hidden_dim) * 0.01
+        self.bh = np.zeros(hidden_dim)
+        
+        # Output layer
+        self.Wy = np.random.randn(output_dim, hidden_dim) * 0.01
+        self.by = np.zeros(output_dim)
+        
+    def _sigmoid(self, x: np.ndarray) -> np.ndarray:
+        return 1 / (1 + np.exp(-np.clip(x, -500, 500)))
+    
+    def _forward_step(self, x_t: np.ndarray, h_prev: np.ndarray):
+        xh = np.concatenate([x_t, h_prev])
+        
+        z = self._sigmoid(xh @ self.Wz.T + self.bz)
+        r = self._sigmoid(xh @ self.Wr.T + self.br)
+        h_candidate = np.tanh(xh @ self.Wh.T + self.bh)
+        
+        h_t = (1 - z) * h_prev + z * h_candidate
+        return h_t, (x_t, h_prev, z, r, h_candidate)
+    
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        if X.ndim == 2:
+            X = X.reshape(1, *X.shape)
+        
         predictions = []
-        current_input = X.copy()
-        
-        for _ in range(steps):
-            pred = self.predict(current_input)
+        for sample in X:
+            h = np.zeros(self.hidden_dim)
+            
+            for t in range(min(self.seq_len, len(sample))):
+                h, _ = self._forward_step(sample[t], h)
+            
+            pred = h @ self.Wy.T + self.by
             predictions.append(pred)
-            current_input = np.roll(current_input, -1, axis=0)
-            current_input[-1] = pred
         
-        return np.array(predictions)
+        return np.array(predictions).flatten()
+    
+    def fit(self, X: np.ndarray, y: np.ndarray, epochs: int = 20, 
+            lr: float = 0.001) -> Dict[str, Any]:
+        self.history = []
+        loss = 0.0
+        
+        for epoch in range(epochs):
+            total_loss = 0
+            for i in range(len(X)):
+                sample = X[i]
+                target = y[i]
+                
+                h = np.zeros(self.hidden_dim)
+                for t in range(min(self.seq_len, len(sample))):
+                    h, _ = self._forward_step(sample[t], h)
+                
+                pred = h @ self.Wy.T + self.by
+                error = pred - target
+                
+                self.Wy += lr * np.outer(error, h)
+                self.by += lr * error
+                
+                total_loss += error ** 2
+            
+            loss = total_loss / len(X)
+            self.history.append(loss)
+        
+        return {"status": "success", "final_loss": float(loss), "epochs": epochs}
 
 
-class GRU(LSTM):
-    """GRU (门控循环单元) - LSTM的简化版本"""
+class LSTMEnsemble:
+    """
+    LSTM Ensemble for robust prediction with uncertainty quantification
+    """
     
-    def __init__(self, input_size: int, hidden_size: int, output_size: int,
-                 learning_rate: float = 0.01, verbose: bool = False):
-        super().__init__(input_size, hidden_size, output_size, learning_rate, verbose)
+    def __init__(self, n_models: int = 5):
+        self.n_models = n_models
+        self.models = []
         
-        scale = 1.0 / np.sqrt(hidden_size)
-        self.W_z = np.random.randn(hidden_size, hidden_size + input_size) * scale
-        self.W_r = np.random.randn(hidden_size, hidden_size + input_size) * scale
-        self.W_h = np.random.randn(hidden_size, hidden_size + input_size) * scale
+    def fit(self, X: np.ndarray, y: np.ndarray, epochs: int = 20, 
+            lr: float = 0.001):
+        """Train ensemble of LSTM models"""
+        self.models = []
+        for i in range(self.n_models):
+            hidden_dim = 32 + i * 16
+            model = LSTM(input_dim=X.shape[-1], hidden_dim=hidden_dim,
+                        seq_len=X.shape[1])
+            model.fit(X, y, epochs=epochs, lr=lr)
+            self.models.append(model)
         
-        self.b_z = np.zeros((hidden_size, 1))
-        self.b_r = np.zeros((hidden_size, 1))
-        self.b_h = np.zeros((hidden_size, 1))
+        return {"status": "success", "n_models": self.n_models}
     
-    def forward(self, X: np.ndarray) -> Dict[str, np.ndarray]:
-        """GRU前向传播"""
-        T = X.shape[0]
-        h = np.zeros((self.hidden_size, 1))
-        
-        gates = {'update': [], 'reset': [], 'h': [h.copy()]}
-        
-        for t in range(T):
-            x_t = X[t].reshape(-1, 1)
-            concat = np.vstack((h, x_t))
-            
-            z_t = self._sigmoid(self.W_z @ concat + self.b_z)
-            r_t = self._sigmoid(self.W_r @ concat + self.b_r)
-            
-            concat_r = np.vstack((r_t * h, x_t))
-            h_tilde = self._tanh(self.W_h @ concat_r + self.b_h)
-            
-            h = (1 - z_t) * h + z_t * h_tilde
-            
-            gates['update'].append(z_t)
-            gates['reset'].append(r_t)
-            gates['h'].append(h.copy())
-        
-        y = self.W_y @ h + self.b_y
-        return {'y': y, 'h': h, 'gates': gates}
-
-
-if __name__ == "__main__":
-    np.random.seed(42)
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        predictions = [m.predict(X) for m in self.models]
+        return np.mean(predictions, axis=0)
     
-    T = 100
-    X = np.linspace(0, 4*np.pi, T).reshape(-1, 1)
-    y = np.sin(X).flatten()
-    
-    lstm = LSTM(input_size=1, hidden_size=16, output_size=1, learning_rate=0.01)
-    history = lstm.fit(X, y, epochs=200, verbose=True)
-    
-    predictions = lstm.predict(X)
-    print(f"Final loss: {history['loss'][-1]:.6f}")
-    
-    future = lstm.predict_sequence(X[-10:], steps=20)
-    print(f"Future predictions shape: {future.shape}")
+    def predict_with_std(self, X: np.ndarray) -> Dict[str, np.ndarray]:
+        predictions = [m.predict(X) for m in self.models]
+        return {
+            "mean": np.mean(predictions, axis=0),
+            "std": np.std(predictions, axis=0)
+        }
