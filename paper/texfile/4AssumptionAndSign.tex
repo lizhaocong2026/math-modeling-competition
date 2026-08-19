@@ -1,19 +1,33 @@
 \\newpage
-\\section{模型假设与符号说明}
-\\subsection{模型假设}
-为使问题简化并抓住主要矛盾，我们做出以下合理假设：假设交通流量数据真实可靠；假设外部因素数据可获取；假设道路容量短时间内保持不变；假设车辆行驶速度服从正态分布；假设优化模型只考虑短时预测。
+\\section{基本假设与符号说明}
+
+\\subsection{基本假设}
+为了保证模型的可行性和合理性，本文作如下假设：
+\\begin{enumerate}
+    \\item 假设传感器数据准确可靠，不存在系统性误差
+    \\item 假设交通流具有明显的24小时周期性和7天周期性
+    \\item 假设天气、节假日等因素对交通流的影响可量化
+    \\item 假设优化调度不会导致交通瘫痪等极端情况
+\\end{enumerate}
+
 \\subsection{符号说明}
-\\begin{center}
-\\begin{tabular}{cc}
-\\toprule[1pt] 
-符号 & 说明 \\\\  
-\\hline
-$ &  \\\\
-$ &  \\\\
-$ &  \\\\
-(t)$ &  \\\\
-$ & 第 \\\\
-\\bottomrule[1pt]
-\\end{tabular}
-\\end{center}
-注：未在前文中出现的符号将在首次出现时说明。
+
+\\begin{table}[H]
+    \\centering
+    \\caption{主要符号说明}
+    \\begin{tabular}{ccc}
+        \\toprule
+        符号 & 含义 & 单位 \\
+        \\midrule
+        $F_t$ & t时刻交通流量 & 辆/小时 \\
+        $T_t$ & 趋势项 & 辆/小时 \\
+        $S_t$ & 季节项 & 辆/小时 \\
+        $R_t$ & 残差项 & 辆/小时 \\
+        $\\hat{F}_t$ & t时刻预测值 & 辆/小时 \\
+        $Z_1$ & 拥堵指数目标 & - \\
+        $Z_2$ & 通行效率目标 & - \\
+        $x_i$ & 第i条道路调度方案 & - \\
+        $\\alpha$ & ARIMA模型阶数 & - \\
+        \\bottomrule
+    \\end{tabular}
+\\end{table}
