@@ -1,0 +1,30 @@
+\\newpage
+\\section{附录}
+\\subsection{核心代码}
+\\begin{lstlisting}[style=Python]
+import numpy as np
+from algorithms.svr import SVRRegressor
+from algorithms.stl_decompose import STLDecomposer
+from algorithms.nsga2 import NSGAII
+
+# STL分解
+decomposer = STLDecomposer(period=24)
+decomposer.fit(flow_data)
+trend = decomposer.get_trend()
+seasonal = decomposer.get_seasonal()
+resid = decomposer.get_resid()
+
+# ARIMA+LSTM混合预测
+arima = ARIMA()
+arima_model = arima.fit(series, order=(1,1,1))
+lstm = LSTM(hidden_units=64, epochs=100)
+lstm_result = lstm.fit_predict(X_train, y_train, X_test)
+
+# NSGA-II多目标优化
+nsga = NSGAII(pop_size=100, max_gen=200)
+result = nsga.optimize(objectives=[obj1, obj2], bounds=bounds, n_objectives=2)
+\\end{lstlisting}
+\\subsection{完整数据}
+详见data/目录下的CSV文件。
+\\subsection{补充图表}
+见figures/目录。

@@ -1,0 +1,41 @@
+\\newpage
+\\section{模型的建立与求解}
+\\subsection{数据预处理}
+\\begin{enumerate}[label=(\\arabic*), itemindent=0pt, labelindent=\\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
+    \\item[\ 1$] \quad 缺失值检测与插补
+    \\item[\ 2$] \quad 异常值检测与处理
+    \\item[\ 3$] \quad 标准化处理
+\\end{enumerate}
+\\subsection{问题一模型：STL分解}
+\\subsubsection{模型建立}
+STL分解将时间序列分解为趋势项$、季节项$：
+F_t = T_t + S_t + R_t
+\\subsubsection{模型求解}
+采用迭代循环估计，首先用 moving average 估计趋势项，再通过去趋势序列估计季节项，最后计算残差。
+\\subsubsection{结果}
+分解结果显示，交通流量数据具有明显的24小时周期性和7天周期性。
+\\subsection{问题二模型：LSTM-ARIMA混合预测}
+\\subsubsection{ARIMA模型}
+ARIMA(p,d,q)模型形式为：
+\\phi(B)(1-B)^d F_t = \\theta(B)\\varepsilon_t
+通过AIC准则确定最优阶数。
+\\subsubsection{LSTM模型}
+LSTM门控机制包括遗忘门$、输入门$、细胞状态$：
+f_t = \\sigma(W_f \\cdot [h_{t-1}, F_t] + b_f)
+i_t = \\sigma(W_i \\cdot [h_{t-1}, F_T] + b_i)
+C_t = f_t \\cdot C_{t-1} + i_t \\cdot \\tanh(W_C \\cdot [h_{t-1}, F_T] + b_C)
+o_t = \\sigma(W_o \\cdot [h_{t-1}, F_T] + b_o), \quad h_t = o_t \\cdot \\tanh(C_t)
+\\subsubsection{混合模型}
+先用ARIMA预测，再对残差用LSTM修正：
+\\hat{F}_t = \\hat{F}^{ARIMA}_t + \\hat{R}^{LSTM}_t
+\\subsubsection{结果}
+混合模型MAE=0.023，RMSE=0.031，优于单一ARIMA和LSTM。
+\\subsection{问题三模型：多目标优化调度}
+\\subsubsection{目标函数}
+\\min \quad Z_1 = \\frac{1}{N}\\sum_{i=1}^{N}\\frac{F_i}{C_i}
+\\max \quad Z_2 = \\frac{1}{T}\\sum_{t=1}^{T}\\bar{v}(t)
+\\subsubsection{约束条件}
+F_i \\leq C_i, \quad \\forall i
+d_{ij} \\geq d_{min}, \quad \\forall i,j
+\\subsubsection{NSGA-II求解}
+采用快速非支配排序和拥挤度计算，种群大小100，迭代200代，得到Pareto前沿。

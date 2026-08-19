@@ -97,3 +97,58 @@
 > 创建日期：2026-08-18  最后更新：2026-08-18  
 > 数据源来源：4 张原始截图（109来源）  仓库地址：https://github.com/lizhaocong2026/math-modeling-competition  
 > 本轮新增：模板用法指南3篇 + 选题决策树1篇 + 避坑指南1篇 + FAQ文档3篇 + Example文档4篇
+
+
+---
+
+## 新增资产（2026-08-19 深度脑暴后）
+
+### 新增算法（6个）
+| 文件 | 说明 | 适用题型 |
+|------|------|---------|
+| lgorithms/svr.py | SVM回归预测 | B题/C题 |
+| lgorithms/xgboost.py | XGBoost梯度提升 | B题/C题 |
+| lgorithms/lightgbm.py | LightGBM快速梯度提升 | B题/C题 |
+| lgorithms/lda.py | 线性判别分析 | C题分类降维 |
+| lgorithms/stl_decompose.py | STL时间序列分解 | B题预测 |
+| lgorithms/sarima.py | SARIMA季节模型 | B题周期预测 |
+| lgorithms/rf_regression.py | 随机森林回归 | B题/C题 |
+| lgorithms/cma_es.py | CMA-ES进化策略 | A题优化 |
+| lgorithms/gan.py | 生成对抗网络 | 数据增强 |
+| lgorithms/automl.py | 自动机器学习流水线 | 全流程 |
+
+### 新增论文模板
+- paper/document.tex - 主编译文件
+- paper/texfile/1abstract.tex - 摘要模板
+- paper/texfile/2ProblemRestatement.tex - 问题重述
+- paper/texfile/3ProblemAnalysis.tex - 问题分析
+- paper/texfile/4AssumptionAndSign.tex - 假设与符号
+- paper/texfile/5MakeModel.tex - 模型建立与求解
+- paper/texfile/6ErrorAnalysis.tex - 误差分析
+- paper/texfile/7ModelEvaluation.tex - 模型评价
+- paper/texfile/8Reference.tex - 参考文献
+- paper/texfile/9Appendix.tex - 附录
+
+### 新增文档
+- docs/brainstorming_report.md - 深度脑暴报告
+- docs/paper_writing/paper_writing_guide.md - 论文写作指南
+- docs/references/external_resources.md - 外部资源汇总
+- 
+eference_papers/README.md - 范文存放说明
+
+### 外部资源收录
+- EmpyreanHYR/CUMCM-Latex-template (37星)
+- Sustainable-Enjoyment/CUMCM-LaTeX-Template (37星)
+- personqianduixue/CUMCM_LaTeX_Template (49星)
+- zhanwen/MathModel (11265星)
+- machinelearninglab/mathematical-modeling (84星)
+
+---
+
+## 快速开始
+
+1. 查看脑暴报告：docs/brainstorming_report.md
+2. 使用论文模板：paper/document.tex
+3. 参考写作指南：docs/paper_writing/paper_writing_guide.md
+4. 浏览外部资源：docs/references/external_resources.md
+

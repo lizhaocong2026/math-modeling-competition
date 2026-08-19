@@ -1,0 +1,57 @@
+\documentclass[withoutpreface,bwprint]{cumcmthesis}
+% ==================== 基础配置 ====================
+\usepackage{ctex}
+\usepackage{geometry}
+\geometry{top=25mm,bottom=25mm,left=25mm,right=25mm}
+% ==================== 数学公式 ====================
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{siunitx}
+% ==================== 图表 ====================
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage[figuresright]{rotating}
+% ==================== 表格 ====================
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+% ==================== 列表 ====================
+\usepackage{enumitem}
+\usepackage{caption}
+% ==================== 页眉页脚 ====================
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+% ==================== 代码高亮 ====================
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{numbers=left, showspaces=false, numberstyle=\tiny\ttfamily, breaklines=true, basicstyle=\ttfamily\footnotesize, keywordstyle=\color{blue}\bfseries, stringstyle=\color{magenta}, commentstyle=\color{green}\itshape}
+\lstdefinestyle{Python}{language=Python, basicstyle=\ttfamily\small, keywordstyle=\color{blue}\bfseries, stringstyle=\color{magenta}, commentstyle=\color{gray}\itshape}
+\lstdefinestyle{MATLAB}{language=Matlab, basicstyle=\ttfamily\small, keywordstyle=\color{blue}\bfseries, stringstyle=\color{magenta}, commentstyle=\color{gray}\itshape}
+% ==================== 参考文献 ====================
+\usepackage[numbers,sort&compress]{natbib}
+% ==================== 超链接 ====================
+\usepackage{hyperref}
+\hypersetup{hidelinks, colorlinks=false}
+% ==================== 论文信息 ====================
+\title{基于多目标优化的城市交通流量预测与调度研究}
+\tihao{A}
+\baominghao{1234}
+\schoolname{示例大学}
+\yearinput{2025}
+\monthinput{09}
+\dayinput{03}
+\begin{document}
+\input{texfile/1abstract}
+\input{texfile/2ProblemRestatement}
+\input{texfile/3ProblemAnalysis}
+\input{texfile/4AssumptionAndSign}
+\input{texfile/5MakeModel}
+\input{texfile/6ErrorAnalysis}
+\input{texfile/7ModelEvaluation}
+\input{texfile/8Reference}
+\input{texfile/9Appendix}
+\end{document}
