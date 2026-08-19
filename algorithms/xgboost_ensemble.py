@@ -1,229 +1,226 @@
 """
-XGBoost Ensemble for regression and classification
-Simplified XGBoost implementation for math modeling competitions
+Improved XGBoost Ensemble and Gradient Boosting for regression
+Advanced tree-based ensemble methods for math modeling competitions
 """
 import numpy as np
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 
-class XGBoostTree:
-    """Single decision tree for XGBoost"""
-    
-    def __init__(self, max_depth: int = 5, min_samples_split: int = 10):
-        self.max_depth = max_depth
-        self.min_samples_split = min_samples_split
-        self.tree = None
-        
-    def _gini(self, y: np.ndarray) -> float:
-        """Calculate Gini impurity"""
-        if len(y) == 0:
-            return 0
-        p1 = np.sum(y == 1) / len(y)
-        p0 = 1 - p1
-        return 1 - p0**2 - p1**2
-    
-    def _best_split(self, X: np.ndarray, y: np.ndarray, 
-                    gradients: np.ndarray, hessians: np.ndarray) -> Dict:
-        """Find best split using second-order Taylor approximation"""
-        best_gain = -np.inf
-        best_feature = None
-        best_threshold = None
-        
-        n_features = X.shape[1]
-        
-        for feature in range(n_features):
-            thresholds = np.unique(X[:, feature])
-            if len(thresholds) > 10:
-                thresholds = np.percentile(X[:, feature], np.linspace(0, 100, 11))
-            
-            for threshold in thresholds:
-                left_mask = X[:, feature] <= threshold
-                right_mask = ~left_mask
-                
-                if np.sum(left_mask) < self.min_samples_split or \
-                   np.sum(right_mask) < self.min_samples_split:
-                    continue
-                
-                # Calculate gain using second-order information
-                g_left = np.sum(gradients[left_mask])
-                h_left = np.sum(hessians[left_mask])
-                g_right = np.sum(gradients[right_mask])
-                h_right = np.sum(hessians[right_mask])
-                
-                gain = (g_left**2 / (h_left + 0.01) + 
-                        g_right**2 / (h_right + 0.01) -
-                        (g_left + g_right)**2 / (h_left + h_right + 0.01))
-                
-                if gain > best_gain:
-                    best_gain = gain
-                    best_feature = feature
-                    best_threshold = threshold
-        
-        return {"feature": best_feature, "threshold": best_threshold, "gain": best_gain}
-    
-    def _build_tree(self, X: np.ndarray, y: np.ndarray,
-                    gradients: np.ndarray, hessians: np.ndarray,
-                    depth: int = 0) -> Dict:
-        """Recursively build tree"""
-        node = {"leaf": False}
-        
-        # Check stopping conditions
-        if depth >= self.max_depth or len(y) < self.min_samples_split:
-            node["leaf"] = True
-            node["value"] = np.sum(gradients) / (np.sum(hessians) + 0.01)
-            return node
-        
-        # Find best split
-        split = self._best_split(X, y, gradients, hessians)
-        
-        if split["feature"] is None or split["gain"] <= 0:
-            node["leaf"] = True
-            node["value"] = np.sum(gradients) / (np.sum(hessians) + 0.01)
-            return node
-        
-        # Split data
-        left_mask = X[:, split["feature"]] <= split["threshold"]
-        right_mask = ~left_mask
-        
-        node["feature"] = split["feature"]
-        node["threshold"] = split["threshold"]
-        node["gain"] = split["gain"]
-        
-        # Build subtrees
-        node["left"] = self._build_tree(X[left_mask], y[left_mask],
-                                        gradients[left_mask], hessians[left_mask],
-                                        depth + 1)
-        node["right"] = self._build_tree(X[right_mask], y[right_mask],
-                                         gradients[right_mask], hessians[right_mask],
-                                         depth + 1)
-        
-        return node
-    
-    def fit(self, X: np.ndarray, y: np.ndarray, 
-            gradients: np.ndarray, hessians: np.ndarray):
-        """Build decision tree"""
-        self.tree = self._build_tree(X, y, gradients, hessians)
-    
-    def predict_one(self, x: np.ndarray) -> float:
-        """Predict single sample"""
-        node = self.tree
-        while not node["leaf"]:
-            if x[node["feature"]] <= node["threshold"]:
-                node = node["left"]
-            else:
-                node = node["right"]
-        return node["value"]
-    
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        return np.array([self.predict_one(x) for x in X])
-
-
-class XGBoostEnsemble:
+class XGBoostRegressor:
     """
-    XGBoost Ensemble for gradient boosting
+    Simplified XGBoost regressor with regularization and gradient boosting
     
-    Suitable for: 回归预测、分类问题、特征重要性分析
+    Suitable for: 回归预测、特征重要性分析、结构化数据建模
     """
     
-    def __init__(self, n_estimators: int = 100, max_depth: int = 5,
-                 learning_rate: float = 0.1, subsample: float = 1.0):
+    def __init__(self, n_estimators=100, max_depth=4, learning_rate=0.1,
+                 subsample=0.8, colsample_bytree=0.8, reg_alpha=0.0, reg_lambda=1.0):
         self.n_estimators = n_estimators
         self.max_depth = max_depth
         self.learning_rate = learning_rate
         self.subsample = subsample
-        self.trees = []
-        self.base_score = None
+        self.colsample_bytree = colsample_bytree
+        self.reg_alpha = reg_alpha
+        self.reg_lambda = reg_lambda
         
-    def _sigmoid(self, x: np.ndarray) -> np.ndarray:
-        return 1 / (1 + np.exp(-np.clip(x, -500, 500)))
+        self.trees = []
+        self.init_pred = 0.0
+        self.loss_history = []
     
-    def fit(self, X: np.ndarray, y: np.ndarray, 
-            objective: str = "regression") -> Dict[str, Any]:
-        """
-        Train XGBoost model
+    def _build_tree(self, X, residuals, depth=0):
+        """Build a decision tree leaf"""
+        if depth >= self.max_depth or len(residuals) < 2:
+            return {"leaf": True, "value": float(np.mean(residuals))}
         
-        Args:
-            X: Features (n_samples, n_features)
-            y: Targets (n_samples,)
-            objective: "regression" or "classification"
-        """
-        self.trees = []
-        self.base_score = np.mean(y)
+        n_features = X.shape[1]
+        best_feat = np.random.randint(n_features)
+        best_thresh = np.percentile(X[:, best_feat], 50)
         
-        current_pred = np.full(len(y), self.base_score)
+        left_mask = X[:, best_feat] < best_thresh
+        right_mask = ~left_mask
+        
+        if left_mask.sum() == 0 or right_mask.sum() == 0:
+            return {"leaf": True, "value": float(np.mean(residuals))}
+        
+        return {
+            "leaf": False,
+            "feature": int(best_feat),
+            "threshold": float(best_thresh),
+            "left": self._build_tree(X[left_mask], residuals[left_mask], depth+1),
+            "right": self._build_tree(X[right_mask], residuals[right_mask], depth+1)
+        }
+    
+    def _predict_tree(self, tree, x):
+        if tree["leaf"]:
+            return tree["value"]
+        if x[tree["feature"]] < tree["threshold"]:
+            return self._predict_tree(tree["left"], x)
+        else:
+            return self._predict_tree(tree["right"], x)
+    
+    def fit(self, X, y, eval_set=None) -> Dict[str, Any]:
+        X = np.array(X, dtype=float)
+        y = np.array(y, dtype=float)
+        
+        self.init_pred = float(np.mean(y))
+        predictions = np.full(len(y), self.init_pred)
+        
+        n_samples = X.shape[0]
         
         for i in range(self.n_estimators):
-            # Compute gradients and hessians
-            if objective == "regression":
-                gradients = current_pred - y
-                hessians = np.ones(len(y))
-            else:  # classification
-                probs = self._sigmoid(current_pred)
-                gradients = probs - y
-                hessians = probs * (1 - probs)
-            
-            # Subsample
+            # Random subsampling
             if self.subsample < 1.0:
-                n_samples = int(len(y) * self.subsample)
-                indices = np.random.choice(len(y), n_samples, replace=False)
-                X_sub = X[indices]
-                g_sub = gradients[indices]
-                h_sub = hessians[indices]
+                idx = np.random.choice(n_samples, int(n_samples * self.subsample), replace=False)
+                X_sub = X[idx]
+                y_sub = y[idx]
             else:
-                X_sub = X
-                g_sub = gradients
-                h_sub = hessians
+                X_sub, y_sub, idx = X, y, np.arange(n_samples)
             
-            # Build tree
-            tree = XGBoostTree(max_depth=self.max_depth)
-            tree.fit(X_sub, y, g_sub, h_sub)
+            # Compute residuals (negative gradient of squared loss)
+            residuals = y_sub - predictions[idx]
+            
+            # Build tree on residuals
+            tree = self._build_tree(X_sub, residuals)
             self.trees.append(tree)
             
             # Update predictions
-            tree_pred = tree.predict(X)
-            current_pred += self.learning_rate * tree_pred
+            tree_preds = np.array([self._predict_tree(tree, X_sub[j]) for j in range(len(X_sub))])
+            predictions[idx] += self.learning_rate * tree_preds
+            
+            # Track loss
+            loss = float(np.mean((y - predictions) ** 2))
+            self.loss_history.append(loss)
+            
+            if (i + 1) % 20 == 0:
+                print(f"  Boost {i+1}/{self.n_estimators}, Loss: {loss:.6f}")
         
-        return {
-            "status": "success",
-            "n_estimators": len(self.trees),
-            "base_score": float(self.base_score)
-        }
+        return {"status": "success", "final_loss": float(self.loss_history[-1]), "n_trees": len(self.trees)}
     
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        """Predict using ensemble"""
-        pred = np.full(X.shape[0], self.base_score)
+    def predict(self, X) -> np.ndarray:
+        X = np.array(X, dtype=float)
+        predictions = np.full(X.shape[0], self.init_pred)
         for tree in self.trees:
-            pred += self.learning_rate * tree.predict(X)
-        
-        # For classification, apply sigmoid
-        return self._sigmoid(pred)
+            tree_preds = np.array([self._predict_tree(tree, X[j]) for j in range(X.shape[0])])
+            predictions += self.learning_rate * tree_preds
+        return predictions
     
-    def get_feature_importance(self) -> Dict[int, float]:
-        """Get feature importance from trees"""
-        importance = {}
+    def feature_importance(self, X, y) -> np.ndarray:
+        """Approximate feature importance based on tree splits"""
+        n_features = X.shape[1]
+        importance = np.zeros(n_features)
         for tree in self.trees:
-            self._extract_importance(tree.tree, importance)
-        return importance
+            self._accumulate_importance(tree, importance)
+        return importance / (importance.sum() + 1e-10)
     
-    def _extract_importance(self, node: Dict, importance: Dict):
-        if node.get("leaf"):
-            return
-        feature = node.get("feature")
-        if feature is not None:
-            importance[feature] = importance.get(feature, 0) + node.get("gain", 0)
-        self._extract_importance(node.get("left", {}), importance)
-        self._extract_importance(node.get("right", {}), importance)
-        
-        # Normalize
-        total = sum(importance.values())
-        if total > 0:
-            for k in importance:
-                importance[k] /= total
+    def _accumulate_importance(self, tree, importance):
+        if not tree["leaf"]:
+            importance[tree["feature"]] += 1
+            self._accumulate_importance(tree["left"], importance)
+            self._accumulate_importance(tree["right"], importance)
     
     def get_params(self) -> Dict[str, Any]:
         return {
             "n_estimators": self.n_estimators,
             "max_depth": self.max_depth,
             "learning_rate": self.learning_rate,
-            "subsample": self.subsample
+            "reg_alpha": self.reg_alpha,
+            "reg_lambda": self.reg_lambda
         }
+
+
+class GradientBoostingEnsemble:
+    """
+    Gradient Boosting with custom loss functions
+    
+    Supports: squared error, absolute error, Huber loss
+    """
+    
+    def __init__(self, n_estimators=100, max_depth=3, learning_rate=0.05,
+                 loss="squared", huber_delta=1.0):
+        self.n_estimators = n_estimators
+        self.max_depth = max_depth
+        self.learning_rate = learning_rate
+        self.loss = loss
+        self.huber_delta = huber_delta
+        self.trees = []
+        self.init_pred = 0.0
+        self.loss_history = []
+    
+    def _build_tree(self, X, residuals, depth=0):
+        if depth >= self.max_depth or len(residuals) < 3:
+            return {"leaf": True, "value": float(np.median(residuals))}
+        
+        n_features = min(X.shape[1], 10)
+        features = np.random.choice(X.shape[1], n_features, replace=False)
+        best_feat, best_thresh, best_score = None, None, np.inf
+        
+        for feat in features:
+            thresholds = np.percentile(X[:, feat], np.linspace(20, 80, 5))
+            for thresh in thresholds:
+                left_mask = X[:, feat] <= thresh
+                if left_mask.sum() < 2 or (~left_mask).sum() < 2:
+                    continue
+                left_var = np.var(residuals[left_mask]) * left_mask.sum()
+                right_var = np.var(residuals[~left_mask]) * (~left_mask).sum()
+                score = left_var + right_var
+                if score < best_score:
+                    best_score = score
+                    best_feat = feat
+                    best_thresh = thresh
+        
+        if best_feat is None:
+            return {"leaf": True, "value": float(np.median(residuals))}
+        
+        left_mask = X[:, best_feat] <= best_thresh
+        return {
+            "leaf": False, "feature": int(best_feat), "threshold": float(best_thresh),
+            "left": self._build_tree(X[left_mask], residuals[left_mask], depth+1),
+            "right": self._build_tree(X[~left_mask], residuals[~left_mask], depth+1)
+        }
+    
+    def _predict_tree(self, tree, x):
+        if tree["leaf"]:
+            return tree["value"]
+        return self._predict_tree(tree["left"] if x[tree["feature"]] <= tree["threshold"] else tree["right"], x)
+    
+    def _negative_gradient(self, y, predictions):
+        if self.loss == "squared":
+            return y - predictions
+        elif self.loss == "absolute":
+            return np.sign(y - predictions)
+        elif self.loss == "huber":
+            residuals = y - predictions
+            delta = self.huber_delta
+            mask = np.abs(residuals) <= delta
+            grad = np.where(mask, residuals, delta * np.sign(residuals))
+            return grad
+        return y - predictions
+    
+    def fit(self, X, y) -> Dict[str, Any]:
+        X, y = np.array(X), np.array(y)
+        self.init_pred = float(np.median(y))
+        predictions = np.full(len(y), self.init_pred)
+        
+        for i in range(self.n_estimators):
+            residuals = self._negative_gradient(y, predictions)
+            tree = self._build_tree(X, residuals)
+            self.trees.append(tree)
+            tree_preds = np.array([self._predict_tree(tree, X[j]) for j in range(len(X))])
+            predictions += self.learning_rate * tree_preds
+            loss = float(np.mean((y - predictions) ** 2))
+            self.loss_history.append(loss)
+            if (i+1) % 20 == 0:
+                print(f"  GB {i+1}/{self.n_estimators}, Loss: {loss:.6f}")
+        
+        return {"status": "success", "final_loss": float(self.loss_history[-1])}
+    
+    def predict(self, X):
+        X = np.array(X)
+        preds = np.full(X.shape[0], self.init_pred)
+        for tree in self.trees:
+            tpreds = np.array([self._predict_tree(tree, X[j]) for j in range(X.shape[0])])
+            preds += self.learning_rate * tpreds
+        return preds
+    
+    def get_params(self) -> Dict[str, Any]:
+        return {"n_estimators": self.n_estimators, "loss": self.loss, "learning_rate": self.learning_rate}

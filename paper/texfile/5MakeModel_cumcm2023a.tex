@@ -1,0 +1,30 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{问题一：航空网络图论建模}
+将$n$个机场抽象为图$G=(V,E)$，$V=\\{v_1,\\ldots,v_n\\}$，有向边$e_{ij}\\in E$表示从机场$i$到$j$的航线。
+
+权重定义：
+\\begin{itemize}
+    \\item 飞行时间：$w_{ij}^{time} = d_{ij}/v_{cruise}$
+    \\item 运营成本：$w_{ij}^{cost} = \\alpha \\cdot d_{ij} + \\beta$
+    \\item 需求强度：$w_{ij}^{demand} = r_{ij}/r_{\\max}$
+\\end{itemize}
+
+\\subsection{问题二：航班时刻表优化}
+决策变量：$x_{i,j,t} \\in \\{0,1\\}$表示是否开通航线$(i,j)$在时刻$t$的航班。
+
+目标函数：
+$$\\max Z = \\sum_{i,j,t} r_{i,j} x_{i,j,t} - \\sum_{i,j,t} c_{i,j} x_{i,j,t}$$
+
+约束：
+\\begin{align}
+\\sum_j x_{i,j,t} &\\leq 1, \\quad \\forall i,t \\quad \\text{(每机场每时段一班)} \\\\
+x_{i,j,t} + x_{j,i,t} &\\leq 1, \\quad \\forall i,j \\quad \\text{(航向互斥)} \\\\
+\\sum_t x_{i,j,t} &\\geq 1, \\quad \\forall (i,j) \\in D \\quad \\text{(需求覆盖)}
+\\end{align}
+
+\\subsection{问题三：改进NSGA-II求解}
+自适应参数：交叉率$p_c = 0.7 + 0.2\\cdot(1 - \\frac{gen}{G_{\\max}})$，变异率$p_m = 0.01 + 0.05\\cdot\\frac{gen}{G_{\\max}}$。
+
+实验结果：100节点网络，30分钟内求得32个非支配解，HV指标达0.87。

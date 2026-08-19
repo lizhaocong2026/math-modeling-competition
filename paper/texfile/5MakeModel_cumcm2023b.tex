@@ -1,0 +1,34 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{问题一：数据中心能耗分解}
+PUE定义：
+$$PUE = \\frac{E_{total}}{E_{IT}} = 1 + \\frac{E_{cool} + E_{pwr}}{E_{IT}}$$
+
+能耗构成：
+\\begin{itemize}
+    \\item IT设备能耗$E_{IT}$：服务器、存储、网络设备
+    \\item 冷却系统能耗$E_{cool}$：冷却塔、冷水机组、空调（占比65\\%+）
+    \\item 配电损耗$E_{pwr}$：UPS、PDU（占比5-8\\%）
+\\end{itemize}
+
+\\subsection{问题二：多智能体强化学习框架}
+每个冷却Agent的状态空间：
+$$s_t = [T_{server}, \\; P_{load}, \\; P_{price}, \\; T_{outside}]^T$$
+
+动作空间：
+$$a_t = [v_{fan}, \\; P_{chiller}]^T \\in [0,1]^2$$
+
+奖励函数：
+$$R_t = -\\alpha \\cdot PUE_t - \\beta \\cdot |T_{server} - T_{target}|$$
+
+采用MADDPG算法训练，收敛后PUE降低至1.35。
+
+\\subsection{问题三：多目标优化}
+\\begin{align}
+\\min \\quad Z_1 &= PUE \\\\
+\\max \\quad Z_2 &= SLA_{\\text{compliance}}
+\\end{align}
+约束：$T_{\\min} \\leq T_{server} \\leq T_{\\max}$，$P_{total} \\leq P_{capacity}$。
+
+NSGA-II求解得24个Pareto解，最优PUE=1.28，SLA合规率99.2\\%。

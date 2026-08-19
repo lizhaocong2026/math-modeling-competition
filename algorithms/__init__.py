@@ -50,3 +50,6 @@ from .ga_improved import AdaptiveGeneticAlgorithm, NSGA2Improved
 from .sa_improved import SimulatedAnnealing, TabuSearch
 from .cnn_lstm import CNNLSTM, TCN
 from .bayesian_opt import BayesianOptimization, StackingEnsemble
+
+from .xgboost_ensemble import XGBoostRegressor, GradientBoostingEnsemble
+from .gnn_improved import ImprovedGCN, SpatialTemporalGNN

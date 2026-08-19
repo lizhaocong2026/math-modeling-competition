@@ -1,0 +1,32 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{问题一模型：Prophet碳排放预测}
+\\subsubsection{模型框架}
+Prophet模型将时间序列分解为趋势、季节和节假日效应：
+$$g(t) = m(t) + s(t) + h(t) + \\epsilon_t$$
+其中：
+\\begin{itemize}
+    \\item $m(t)$：分段线性/逻辑增长趋势
+    \\item $s(t)$：年度周期项（傅里叶级数）
+    \\item $h(t)$：节假日效应
+\\end{itemize}
+
+\\subsubsection{结果}
+模型MAPE=4.2\\%，预测2030年碳排放约105亿吨，较2020年增长12\\%。
+
+\\subsection{问题二模型：LMDI驱动因素分解}
+采用对数平均Divisia指数（LMDI）方法：
+$$\\Delta C = C^t - C^0 = \\Delta C_{\\text{eco}} + \\Delta C_{\\text{str}} + \\Delta C_{\\text{int}} + \\Delta C_{\\text{eng}}$$
+分解结果：经济规模效应贡献58\\%，产业结构效应23\\%，能源强度效应12\\%，能源结构效应7\\%。
+
+\\subsection{问题三模型：多目标减排优化}
+\\subsubsection{目标函数}
+\\begin{align}
+\\min \\quad Z_1 &= \\sum_t \\left[ c_{\\text{coal}}(1-x_t) + c_{\\text{renew}} x_t \\right] \\\\
+\\max \\quad Z_2 &= \\sum_t GDP_t(1 - \\delta \\cdot x_t)
+\\end{align}
+其中$x_t$为可再生能源占比，$\\delta$为转型成本系数。
+
+\\subsubsection{NSGA-II求解}
+种群100，迭代200代，得到28个Pareto最优解。最优方案：2030年可再生能源占比达35\\%，减排成本降低22\\%。

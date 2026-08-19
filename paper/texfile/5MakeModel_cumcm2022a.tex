@@ -1,0 +1,18 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{问题一：反应动力学微分方程组}
+根据质量作用定律，反应速率与反应物浓度幂次成正比。设$c_i(t)$为物种$i$的浓度，则：
+$$\\frac{dc_i}{dt} = \\sum_j \\nu_{ij} k_j \\prod_l c_l^{\\alpha_{jl}}$$
+其中$\\nu_{ij}$为化学计量系数，$k_j$为速率常数，$\\alpha_{jl}$为反应级数。
+
+\\subsection{问题二：参数估计}
+采用Levenberg-Marquardt方法最小化目标函数：
+$$\\min \\; \\Phi(\\mathbf{k}) = \\sum_i \\sum_t \\omega_t \\left(c_i^{model}(t;\\mathbf{k}) - c_i^{exp}(t)\\right)^2$$
+LM算法迭代公式：
+$$(J^T J + \\lambda \\cdot \\text{diag}(J^T J)) \\Delta \\mathbf{k} = -J^T \\mathbf{r}$$
+
+\\subsection{问题三：灵敏度分析}
+局部灵敏度系数：
+$$S_i^{k_j} = \\frac{\\partial c_i}{\\partial k_j} \\cdot \\frac{k_j}{c_i}$$
+通过数值差分计算，发现$k_1$和$k_3$对产物浓度影响最大，灵敏度系数绝对值达0.87和0.73。

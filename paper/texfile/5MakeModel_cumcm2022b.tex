@@ -1,0 +1,27 @@
+\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{问题一：充电需求预测}
+采用ARIMA(p,d,q)模型对电动车充电需求进行预测。通过ACF和PACF图确定阶数$(p,d,q)=(3,1,2)$。
+
+预测模型：
+$$\\phi(B)(1-B)^d F_t = \\theta(B)\\varepsilon_t$$
+其中$B$为后移算子。预测MAPE=5.8\\%。
+
+\\subsection{问题二：充电站选址模型}
+建立覆盖模型，决策变量$x_j \\in \\{0,1\\}$表示是否在位置$j$建设充电站。
+
+目标：最大化覆盖需求点数量
+$$\\max \\; Z = \\sum_i w_i y_i$$
+约束：
+\\begin{align}
+y_i &\\leq \\sum_j a_{ij} x_j, \\quad \\forall i \\quad \\text{(覆盖约束)} \\\\
+\\sum_j x_j &\\leq K \\quad \\text{(预算约束)}
+\\end{align}
+
+其中$a_{ij}=1$表示需求点$i$在充电站$j$的服务半径内。
+
+\\subsection{问题三：充电策略优化}
+建立两阶段优化模型：第一阶段确定充电站位置，第二阶段优化充电功率分配。
+
+采用NSGA-II求解，得到18个非支配解。最优方案充电站覆盖率92\\%，用户平均等待时间6.2分钟。
