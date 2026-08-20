@@ -1,17 +1,29 @@
 \newpage
 \section{模型的建立与求解}
 
-\subsection{发酵动力学模型}
+\subsection{数据预处理}
+\begin{enumerate}[label=(\arabic*), itemindent=0pt, labelindent=\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
+\item[1] 缺失值检测与线性插值补全
+\item[2] 异常值检测（3\sigma准则）与Winsorize处理
+\item[3] Min-Max标准化：x* = (x - x_min)/(x_max - x_min)
+\end{enumerate}
+
+\subsection{问题一模型：发酵动力学模型}
 啤酒发酵过程遵循质量作用定律，建立如下反应动力学模型：
-$$\frac{dC_S}{dt} = -k_1 C_S - k_2 C_S C_X$$
-$$\frac{dC_E}{dt} = Y_{E/S} k_1 C_S$$
-$$\frac{dC_{Ac}}{dt} = k_3 C_S - k_4 C_{Ac}$$
-其中$C_S$为糖度，$C_E$为乙醇浓度，$C_{Ac}$为乙酸浓度，$C_X$为菌体浓度，$k_1, k_2, k_3, k_4$为反应速率常数。
+\\frac{dC_S}{dt} = -k_1 C_S - k_2 C_S C_X
+\\frac{dC_E}{dt} = Y_{E/S} k_1 C_S
+\\frac{dC_{Ac}}{dt} = k_3 C_S - k_4 C_{Ac}
+其中C_S为糖度，C_E为乙醇浓度，C_Ac为乙酸浓度，C_X为菌体浓度，k_1,k_2,k_3,k_4为反应速率常数。
 
-\subsection{参数估计}
-采用Levenberg-Marquardt算法拟合实验数据，目标函数为：
-$$\min_{\theta} \sum_{t} \|C^{\text{model}}(t; \theta) - C^{\text{exp}}(t)\|^2$$
-迭代终止条件：$\|\theta^{(k+1)} - \theta^{(k)}\| < 10^{-6}$。
+\subsection{问题二模型：库存-生产联合优化}
+\subsubsection{目标函数}
+\begin{align}
+\min Z &= \sum_{t=1}^{T}[c_p P_t + c_h I_t + c_s S_t] 
+\text{s.t.} \quad I_t = I_{t-1} + P_t - D_t, \quad \forall t 
+\end{align}
+其中P_t为生产量，I_t为库存量，D_t为需求量，c_p/c_h/c_s分别为生产成本/持有成本/缺货成本。
 
-\subsection{模型求解结果}
-估计得到的速率常数为：$k_1=0.023$, $k_2=0.001$, $k_3=0.005$, $k_4=0.002$（单位：min$^{-1}$或L/(mol·min)）。交叉验证RMSE=0.034，模型拟合良好。
+\subsection{问题三模型：配送路径优化}
+采用VRP模型，目标函数为最小化总运输成本：
+\\min \quad Z = \sum_{k \in K}\sum_{i \in V}\sum_{j \in V} c_{ij} x_{ijk}
+约束条件包括：车辆容量约束、时间窗约束、流量守恒约束。采用遗传算法求解，种群大小100，迭代200代。

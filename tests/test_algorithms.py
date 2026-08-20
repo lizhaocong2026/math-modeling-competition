@@ -1,10 +1,11 @@
 ﻿"""
 测试模块 - 验证算法正确性
 """
+import os
 import unittest
 import numpy as np
 import sys
-sys.path.insert(0, '..')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + '/..')
 
 
 class TestOptimization(unittest.TestCase):

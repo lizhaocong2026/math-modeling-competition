@@ -1,29 +1,26 @@
-\\newpage
-\\section{假设与符号说明}
+\newpage
+\section{假设与符号说明}
 
-\\subsection{基本假设}
-\\begin{enumerate}
-    \\item 用户选择充电站遵循最短路径原则，不考虑导航偏差
-    \\item 充电站服务半径为固定值，超出半径的用户不再选择该站点
-    \\item 电网容量充足，建站不受供电能力限制
-    \\item 建设成本与充电桩数量成线性关系
-    \\item 需求强度指数可准确反映各区域充电需求
-\\end{enumerate}
+\subsection{基本假设}
+\begin{enumerate}
+\item 原始数据真实有效，不存在系统性偏差和异常值，测量误差服从正态分布N(0,sigma^2)，且各观测相互独立
+\item 模型参数在考察期内保持相对稳定，不发生突变，可通过历史数据拟合估计，参数置信区间覆盖真实值
+\item 各决策变量相互独立，不考虑强耦合效应，简化模型复杂度并提高可解性，必要时可引入惩罚项处理耦合
+\item 优化目标函数为凸函数或可通过合理近似转化为凸优化问题，保证全局最优解存在且唯一，避免陷入局部最优
+\item 约束条件在可行域内一致成立，不存在冲突，可行域非空且连通，保证优化问题有解
+\item 外部环境因素（如政策变化、市场波动、天气变化等）在考察期内保持相对稳定，不影响模型有效性
+\item 模型求解过程中数值计算的截断误差和舍入误差在可接受范围内，不影响最终结果的精度
+\end{enumerate}
 
-\\subsection{符号说明}
-\\begin{center}
-\\begin{tabular}{c l c}
-\\hline
-符号 & 含义 & 单位 \\\\
-\\hline
-$ & 第 & - \\\\
-{ij}$ & 需求点 & km \\\\
-$ & 服务半径 & km \\\\
-$ & 需求点 & - \\\\
-$ & 站点 & 0-1 \\\\
-$ & 站点 & 万元 \\\\
-$ & 覆盖的需求点数量 & 个 \\\\
-$ & 需求强度指数 & - \\\\
-\\hline
-\\end{tabular}
-\\end{center}
+\subsection{符号说明}
+\begin{center}
+\begin{tabular}{c l c}
+\hline
+\hline
+\hline
+\end{tabular}
+\$\xi$ & 随机扰动项 & - 
+\$\zeta$ & 松弛变量 & - 
+\hline
+\end{tabular}
+\end{center}

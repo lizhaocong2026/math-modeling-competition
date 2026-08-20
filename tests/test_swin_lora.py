@@ -1,7 +1,8 @@
+import os
 import unittest
 import numpy as np
 import sys
-sys.path.insert(0, '.')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + '/..')
 
 
 class TestSwinTransformer(unittest.TestCase):

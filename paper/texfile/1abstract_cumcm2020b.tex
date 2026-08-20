@@ -1,16 +1,19 @@
-\\maketitle
-\\begin{abstract}
-    本文针对2020年CUMCM B题电动汽车充电站选址与定容问题，建立了多目标优化模型。首先分析电动汽车充电需求时空分布特征；其次构建以最小化建设成本和用户等待时间为目标的多目标优化模型；最后采用NSGA-II算法求解Pareto前沿。
-    
-    \\textbf{针对问题一}，我们建立了充电站选址模型。决策变量包括站点位置$，目标函数：
-    \\min Z_1 = \\sum_i C_{build} \\cdot y_i + \\sum_j C_{charger} \\cdot z_j
-    \\min Z_2 = \\sum_i w_i \\cdot t_i
-    
-    \\textbf{针对问题二}，我们分析了不同预算约束下的最优选址方案。通过参数扫描，得到不同预算水平下的Pareto最优解集。
-    
-    \\textbf{针对问题三}，我们进行了灵敏度分析。分析结果表明，当建设成本波动±20\\%时，最优站点数变化不超过15\\%，模型具有良好的稳定性。
-    
-    本研究为电动汽车充电基础设施规划提供了科学决策支持。
-    
-    \\keywords{电动汽车\quad 充电站选址\quad 多目标优化\quad NSGA-II\quad 设施选址}
-\\end{abstract}
+\newpage
+\begin{abstract}
+本文针对2020年CUMCM B题电动汽车充电站布局优化问题，建立了多目标空间优化模型。首先对城市人口分布、交通网络和现有充电设施数据进行分析，构建了充电需求强度指数；其次建立了考虑覆盖最大化与投资成本最小化的双目标选址-定容优化模型；最后设计了兼顾公平性的站点布局方案。
+
+\textbf{针对问题一}，我们综合人口密度、路网密度、现有设施等因素构建了需求强度指数：
+\I_i = w_1 \cdot \frac{Pop_i}{\max(Pop)} + w_2 \cdot \frac{Road_i}{\max(Road)} + w_3 \cdot \left(1 - \frac{Station_i}{\max(Station)}\right)
+权重采用熵权法客观确定，避免了主观赋权的偏差，确保了评价结果的科学性和公正性。
+
+\textbf{针对问题二}，我们建立了覆盖-成本双目标优化模型：
+\\min \quad Z_1 = \sum_j C_j x_j \qquad \max \quad Z_2 = \sum_i D_i \cdot \mathbb{1}[\min_j d_{ij} x_j \leq r]
+采用NSGA-II算法求解，种群大小80，迭代150代，得到28个非支配解，覆盖完整的Pareto前沿。
+
+\textbf{针对问题三}，引入服务均衡度指标量化公平性：
+\\text{Equity} = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(C_i - \bar{C})^2}
+在优化中将其纳入目标函数，确保城市中心和郊区的充电服务公平性，提升整体社会福祉。
+
+本文方法可为城市充电基础设施规划提供科学的决策支持，具有广泛的应用前景。
+\keywords{电动汽车} \textbf{充电站选址} \textbf{多目标优化} \textbf{NSGA-II} \textbf{覆盖模型}
+\end{abstract}

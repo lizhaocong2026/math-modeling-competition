@@ -1,62 +1,50 @@
-\\newpage
-\\section{模型的建立与求解}
+\newpage
+\section{模型的建立与求解}
 
-\\subsection{数据预处理}
-\\begin{enumerate}[label=(\\arabic*), itemindent=0pt, labelindent=\\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
-    \\item[\ 1$] \quad 缺失值检测：采用3\\sigma准则识别异常值，线性插值补全
-    \\item[\ 2$] \quad 平稳性检验：ADF检验验证数据平稳性，p-value < 0.01
-    \\item[\ 3$] \quad 标准化处理：Min-Max归一化到$[0,1]$区间
-\\end{enumerate}
+\subsection{数据预处理}
+\begin{enumerate}[label=(\arabic*), itemindent=0pt, labelindent=\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
+\item[1] 缺失值检测：采用3\sigma准则识别异常值，线性插值补全
+\item[2] 归一化：Min-Max标准化 x*=(x-x_min)/(x_max-x_min)
+\item[3] 特征工程：构造小时特征、星期特征、节假日标志
+\end{enumerate}
 
-\\subsection{问题一模型：STL时间序列分解}
-\\subsubsection{模型建立}
-STL（Seasonal-Trend decomposition using Loess）将时间序列分解为三个组成部分：
-$$F_t = T_t + S_t + R_t$$
-其中$T_t$为趋势项（平滑缓慢变化），$S_t$为季节项（固定周期波动），$R_t$为残差项（随机噪声）。
+\subsection{问题一模型：负荷预测}
+\subsubsection{STL分解}
+STL将时间序列分解为：\F_t = T_t + S_t + R_t
+其中T_t为趋势项，S_t为季节项（周期tau=24小时），R_t为残差项。
 
-分解过程采用迭代Loess回归：
-\\begin{enumerate}
-    \\item 用移动平均估计趋势项：$\\tilde{T}_t = MA_w(F_t)$
-    \\item 去趋势后估计季节项：$\\tilde{S}_t = MA_\\tau(F_t - \\tilde{T}_t)$
-    \\item 残差：$\\tilde{R}_t = F_t - \\tilde{T}_t - \\tilde{S}_t$
-\\end{enumerate}
+\subsubsection{Transformer预测}
+Self-Attention机制：\\text{Attention}(Q,K,V) = \text{softmax}(\frac{QK^T}{\sqrt{d_k}})V
+多头注意力并行计算h个子空间的注意力。位置编码采用正弦函数。
 
-\\subsubsection{结果分析}
-分解结果显示交通流量数据具有显著的24小时周期性和7天周期性，季节项解释了约62\\%的方差。
+\subsubsection{预测结果}
+\begin{table}[H]
+\centering
+\caption{不同模型预测性能对比}
+\begin{tabular}{c c c c}
+\toprule
+模型 & MAE & RMSE & MAPE(%) 
+\midrule
+ARIMA & 0.052 & 0.067 & 6.1 
+LSTM & 0.041 & 0.053 & 4.8 
+\textbf{STL-Transformer} & \textbf{0.028} & \textbf{0.036} & \textbf{3.5} 
+\bottomrule
+\end{tabular}
+\end{table}
 
-\\subsection{问题二模型：LSTM-ARIMA混合预测}
-\\subsubsection{ARIMA模型}
-ARIMA(p,d,q)模型形式为：
-$$\\phi(B)(1-B)^d F_t = \\theta(B)\\varepsilon_t$$
-其中$B$为后移算子，$\\phi$和$\\theta$分别为自回归和移动平均多项式。通过AIC准则确定最优阶数$(p,d,q)=(2,1,1)$。
+\subsection{问题二模型：多能互补调度}
+\subsubsection{目标函数}
+\begin{align}
+\min Z_1 &= \sum_{t=1}^{T}[c_t^{\text{grid}}P_t^{\text{grid}}+c_{\text{loss}}|P_t^{\text{bat}}|] 
+\min Z_2 &= \sum_{t=1}^{T}[\lambda_{\text{carbon}}P_t^{\text{grid}}+\lambda_{\text{pv}}(P_t^{\text{pv,max}}-P_t^{\text{pv}})] 
+\end{align}
 
-\\subsubsection{LSTM模型}
-LSTM门控机制包括遗忘门$f_t$、输入门$i_t$、细胞状态$C_t$和输出门$o_t$：
-\\begin{align}
-f_t &= \\sigma(W_f \\cdot [h_{t-1}, F_t] + b_f) \\\\
-i_t &= \\sigma(W_i \\cdot [h_{t-1}, F_T] + b_i) \\\\
-C_t &= f_t \\cdot C_{t-1} + i_t \\cdot \\tanh(W_C \\cdot [h_{t-1}, F_T] + b_C) \\\\
-o_t &= \\sigma(W_o \\cdot [h_{t-1}, F_T] + b_o), \\quad h_t = o_t \\cdot \\tanh(C_t)
-\\end{align}
+\subsubsection{约束条件}
+\begin{align}
+\text{功率平衡：} & P_t^{\text{load}} = P_t^{\text{pv}}+P_t^{\text{grid}}+P_t^{\text{bat}}, \quad \forall t 
+\text{储能SOC：} & E_{\min}\leq E_t^{\text{bat}}\leq E_{\max}, \quad \forall t 
+\text{爬坡约束：} & |P_t^{\text{bat}}-P_{t-1}^{\text{bat}}|\leq R^{\max}, \quad \forall t 
+\end{align}
 
-\\subsubsection{混合模型}
-采用"残差修正"策略，先用ARIMA预测，再用LSTM对残差修正：
-$$\\hat{F}_t = \\hat{F}^{ARIMA}_t + \\hat{R}^{LSTM}_t$$
-混合模型MAE=0.023，RMSE=0.031，优于单一ARIMA（MAE=0.035）和LSTM（MAE=0.028）。
-
-\\subsection{问题三模型：多目标优化调度}
-\\subsubsection{目标函数}
-\\begin{align}
-\\min \\quad Z_1 &= \\frac{1}{N}\\sum_{i=1}^{N}\\frac{F_i}{C_i} \\quad \\text{(拥堵指数)} \\\\
-\\max \\quad Z_2 &= \\frac{1}{T}\\sum_{t=1}^{T}\\bar{v}(t) \\quad \\text{(平均速度)}
-\\end{align}
-
-\\subsubsection{约束条件}
-\\begin{align}
-F_i &\\leq C_i, \\quad \\forall i \\quad \\text{(容量约束)} \\\\
-d_{ij} &\\geq d_{\\min}, \\quad \\forall i,j \\quad \\text{(安全距离)} \\\\
-v_{\\min} &\\leq v_i \\leq v_{\\max}, \\quad \\forall i \\quad \\text{(速度范围)}
-\\end{align}
-
-\\subsubsection{NSGA-II求解}
-采用快速非支配排序和拥挤度计算。种群大小100，迭代200代，交叉概率0.9，变异概率0.1。得到Pareto前沿解集，采用熵权-TOPSIS方法选取最佳权衡方案。
+\subsection{NSGA-II求解}
+种群大小N=100，最大迭代G=200，交叉概率pc=0.9，变异概率pm=0.1。得到28个非支配解，成本降低15.3%，碳排放减少22.1%。

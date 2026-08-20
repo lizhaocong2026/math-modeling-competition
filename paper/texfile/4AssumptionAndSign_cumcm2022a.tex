@@ -1,29 +1,26 @@
-\\newpage
-\\section{假设与符号说明}
+\newpage
+\section{假设与符号说明}
 
-\\subsection{基本假设}
-\\begin{enumerate}
-    \\item 发酵过程在恒温条件下进行，温度波动对反应速率的影响忽略不计
-    \\item 反应体系为均相溶液，不存在传质限制
-    \\item 原料配比和初始浓度已知且稳定
-    \\item 测量误差服从正态分布，无系统性偏差
-    \\item 菌体生长符合Monod动力学模型
-\\end{enumerate}
+\subsection{基本假设}
+\begin{enumerate}
+\item 原始数据真实有效，不存在系统性偏差和异常值，测量误差服从正态分布N(0,sigma^2)，且各观测相互独立
+\item 模型参数在考察期内保持相对稳定，不发生突变，可通过历史数据拟合估计，参数置信区间覆盖真实值
+\item 各决策变量相互独立，不考虑强耦合效应，简化模型复杂度并提高可解性，必要时可引入惩罚项处理耦合
+\item 优化目标函数为凸函数或可通过合理近似转化为凸优化问题，保证全局最优解存在且唯一，避免陷入局部最优
+\item 约束条件在可行域内一致成立，不存在冲突，可行域非空且连通，保证优化问题有解
+\item 外部环境因素（如政策变化、市场波动、天气变化等）在考察期内保持相对稳定，不影响模型有效性
+\item 模型求解过程中数值计算的截断误差和舍入误差在可接受范围内，不影响最终结果的精度
+\end{enumerate}
 
-\\subsection{符号说明}
-\\begin{center}
-\\begin{tabular}{c l c}
-\\hline
-符号 & 含义 & 单位 \\\\
-\\hline
-$ & 底物（糖度）浓度 & g/L \\\\
-$ & 乙醇浓度 & g/L \\\\
-{Ac}$ & 乙酸浓度 & g/L \\\\
-$ & 菌体浓度 & g/L \\\\
-$ & 第 & L/(mol·min) \\\\
-{P/S}$ & 产物对底物的产率 & - \\\\
-$\\mu$ & 比生长速率 & 1/min \\\\
-$ & 发酵时间 & min \\\\
-\\hline
-\\end{tabular}
-\\end{center}
+\subsection{符号说明}
+\begin{center}
+\begin{tabular}{c l c}
+\hline
+\hline
+\hline
+\end{tabular}
+\$\xi$ & 随机扰动项 & - 
+\$\zeta$ & 松弛变量 & - 
+\hline
+\end{tabular}
+\end{center}

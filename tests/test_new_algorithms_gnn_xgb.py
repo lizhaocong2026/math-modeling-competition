@@ -1,6 +1,9 @@
+import sys
 """
 Tests for XGBoost Ensemble and GNN Improved algorithms
 """
+import os
+sys.path.insert(0, r'D:\\本地的知识库构建\\math-modeling-competition')
 import unittest
 import numpy as np
 

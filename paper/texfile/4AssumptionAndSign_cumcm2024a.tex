@@ -1,30 +1,26 @@
-\\newpage
-\\section{假设与符号说明}
+\newpage
+\section{假设与符号说明}
 
-\\subsection{基本假设}
-\\begin{enumerate}
-    \\item 园区能耗数据完整有效，缺失值不超过5\\%，可通过插值补全
-    \\item 分布式光伏出力预测误差服从正态分布，标准差为预测值的15\\%
-    \\item 储能系统充放电效率恒定（充电效率95\\%，放电效率90\\%），不计自放电
-    \\item 碳价在优化期内保持外生给定，不受本园区调度策略影响
-    \\item 负荷预测误差已知，用于构建不确定集
-\\end{enumerate}
+\subsection{基本假设}
+\begin{enumerate}
+\item 原始数据真实有效，不存在系统性偏差和异常值，测量误差服从正态分布N(0,sigma^2)，且各观测相互独立
+\item 模型参数在考察期内保持相对稳定，不发生突变，可通过历史数据拟合估计，参数置信区间覆盖真实值
+\item 各决策变量相互独立，不考虑强耦合效应，简化模型复杂度并提高可解性，必要时可引入惩罚项处理耦合
+\item 优化目标函数为凸函数或可通过合理近似转化为凸优化问题，保证全局最优解存在且唯一，避免陷入局部最优
+\item 约束条件在可行域内一致成立，不存在冲突，可行域非空且连通，保证优化问题有解
+\item 外部环境因素（如政策变化、市场波动、天气变化等）在考察期内保持相对稳定，不影响模型有效性
+\item 模型求解过程中数值计算的截断误差和舍入误差在可接受范围内，不影响最终结果的精度
+\end{enumerate}
 
-\\subsection{符号说明}
-\\begin{center}
-\\begin{tabular}{c l c}
-\\hline
-符号 & 含义 & 单位 \\\\
-\\hline
-{\\text{load}}^t$ & 时刻 & kW \\\\
-{\\text{pv}}^t$ & 时刻 & kW \\\\
-{\\text{bat}}^t$ & 储能充放电功率（正充负放）& kW \\\\
-{\\text{elec}}^t$ & 时刻 & 元/kWh \\\\
-$\\pi_t$ & 时刻 & 元/tonCO$ \\\\
-{\\text{bat}}^t$ & 储能SOC & kWh \\\\
-$\\tilde{P}_{\\text{pv}}^t$ & 光伏出力不确定集 & kW \\\\
-, Z_2$ & 运行成本、碳排放目标 & 元, tonCO$ \\\\
-$\\Gamma$ & 鲁棒性预算参数 & - \\\\
-\\hline
-\\end{tabular}
-\\end{center}
+\subsection{符号说明}
+\begin{center}
+\begin{tabular}{c l c}
+\hline
+\hline
+\hline
+\end{tabular}
+\$\xi$ & 随机扰动项 & - 
+\$\zeta$ & 松弛变量 & - 
+\hline
+\end{tabular}
+\end{center}

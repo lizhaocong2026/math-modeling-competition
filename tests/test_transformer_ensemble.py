@@ -1,4 +1,5 @@
 """Tests for TransformerEnsemble and LSTMTransformerHybrid"""
+import os
 import pytest
 import numpy as np
 import sys, os

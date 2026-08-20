@@ -1,15 +1,17 @@
-\\newpage
-\\section{误差分析}
+\newpage
+\section{误差分析}
 
-\\subsection{能耗分解误差}
-\\begin{enumerate}
-    \\item[(1)] \\textbf{负荷分类误差}：智能电表数据粒度为15分钟，无法区分同类型设备的精细用能模式，分类误差约8\\%
-    \\item[(2)] \\textbf{气象因素}：空调负荷与室外温度呈非线性关系，线性回归模型在极端天气下偏差增大
-\\end{enumerate}
+\subsection{模型拟合误差}
+模型的拟合误差主要来源于数据噪声和模型结构限制。对于时间序列预测模型，预测误差随预测步长增加而增大，这是由信息衰减造成的。通过交叉验证估计测试集误差：\\text{MAPE} = \frac{1}{n}\sum_{t=1}^{n}\left|\frac{y_t - \hat{y}_t}{y_t}\right|\times 100\%
+其中y_t为真实值，y_hat_t为预测值。交叉验证采用滑动窗口方式，训练集与测试集比例为4:1。
 
-\\subsection{调度模型误差}
-\\begin{enumerate}
-    \\item[(1)] \\textbf{光伏预测误差}：短期光伏预测MAPE约15\\%，worst-case情景下鲁棒调度可能偏保守
-    \\item[(2)] \\textbf{碳价假设}：碳价采用外生给定值（60元/吨），实际碳市场存在$\\pm 20\\%
-\\end{enumerate}
-分布鲁棒优化将worst-case成本控制在置信水平95\\%以内，相比确定性调度，额外成本（价值of robustness）约3.2\\%。
+\subsection{灵敏度分析}
+对关键参数进行灵敏度分析，考察参数变化对模型输出的影响。定义灵敏度系数：\S_{x_i}^{y} = \frac{x_i}{y}\cdot\frac{\partial y}{\partial x_i}
+当|S|<1时为低灵敏度，模型输出对参数变化不敏感；当1<|S|<3时为中等灵敏度；当|S|>3时为高灵敏度，需要重点校准该参数。
+
+\subsection{误差来源分析}
+\begin{enumerate}
+\item[(1)] \textbf{数据误差}：测量误差、缺失值插值引入的偏差，以及采样频率不足导致的信息丢失
+\item[(2)] \textbf{模型误差}：模型结构不能完美刻画真实系统的复杂性，存在结构性偏差
+\item[(3)] \textbf{数值误差}：迭代求解的截断误差和舍入误差，在长时间积分中可能累积
+\end{enumerate}

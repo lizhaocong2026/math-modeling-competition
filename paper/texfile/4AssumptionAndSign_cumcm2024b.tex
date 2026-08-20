@@ -1,28 +1,26 @@
-\\newpage
-\\section{假设与符号说明}
+\newpage
+\section{假设与符号说明}
 
-\\subsection{基本假设}
-\\begin{enumerate}
-    \\item 历史碳排放数据完整，不存在系统性测量误差
-    \\item Prophet模型的changepoint先验分布合理，能捕捉主要趋势变化
-    \\item LMDI分解的统计口径一致，各因子定义清晰无重叠
-    \\item 减排策略可行性约束（如可再生能源渗透率上限）已知
-    \\item 碳交易市场价格外生给定，本省无法影响市场价格
-\\end{enumerate}
+\subsection{基本假设}
+\begin{enumerate}
+\item 原始数据真实有效，不存在系统性偏差和异常值，测量误差服从正态分布N(0,sigma^2)，且各观测相互独立
+\item 模型参数在考察期内保持相对稳定，不发生突变，可通过历史数据拟合估计，参数置信区间覆盖真实值
+\item 各决策变量相互独立，不考虑强耦合效应，简化模型复杂度并提高可解性，必要时可引入惩罚项处理耦合
+\item 优化目标函数为凸函数或可通过合理近似转化为凸优化问题，保证全局最优解存在且唯一，避免陷入局部最优
+\item 约束条件在可行域内一致成立，不存在冲突，可行域非空且连通，保证优化问题有解
+\item 外部环境因素（如政策变化、市场波动、天气变化等）在考察期内保持相对稳定，不影响模型有效性
+\item 模型求解过程中数值计算的截断误差和舍入误差在可接受范围内，不影响最终结果的精度
+\end{enumerate}
 
-\\subsection{符号说明}
-\\begin{center}
-\\begin{tabular}{c l c}
-\\hline
-符号 & 含义 & 单位 \\\\
-\\hline
-$ & 时刻 & 万吨CO$ \\\\
-$\\hat{C}_t$ & 碳排放预测值 & 万吨CO$ \\\\
-, GDP/P, E/GDP, C/E$ & LMDI分解的人口、人均GDP、能源强度、碳排放强度因子 & - \\\\
-$\\Delta C_{\\text{eco}}, \\Delta C_{\\text{struc}}, \\Delta C_{\\text{intensity}}$ & 各驱动因子贡献量 & 万吨CO$ \\\\
-$\\tau$ & 碳达峰年份 & 年 \\\\
-, Z_2, Z_3$ & 经济成本、能源安全、碳排放多目标 & - \\\\
-$ & 熵权法确定的目标权重 & - \\\\
-\\hline
-\\end{tabular}
-\\end{center}
+\subsection{符号说明}
+\begin{center}
+\begin{tabular}{c l c}
+\hline
+\hline
+\hline
+\end{tabular}
+\$\xi$ & 随机扰动项 & - 
+\$\zeta$ & 松弛变量 & - 
+\hline
+\end{tabular}
+\end{center}
