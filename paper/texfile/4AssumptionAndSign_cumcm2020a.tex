@@ -1,23 +1,28 @@
-\newpage
-\section{假设与符号说明}
+\\newpage
+\\section{假设与符号说明}
 
-\subsection{假设}
-\begin{enumerate}
-\item 数据完整性假设：原始数据无系统性缺失，异常值可通过统计方法识别处理
-\item 独立性假设：各观测样本之间相互独立，不存在时间或空间自相关
-\item 稳定性假设：模型参数在考察期间保持稳定，环境因素变化可控
-\item 合理性假设：模型求解结果符合实际情况和物理约束
-\end{enumerate}
+\\subsection{基本假设}
+\\begin{enumerate}
+    \\item 充电车位使用数据完整有效，不存在系统性缺失
+    \\item 价格弹性系数在考察期内保持稳定
+    \\item 相邻充电站之间的竞争效应满足对称性假设
+    \\item 用户充电商决策基于效用最大化原则
+    \\item 电价在考察期内保持相对稳定
+\\end{enumerate}
 
-\subsection{符号说明}
-\begin{tabular}{lll}
-\hline
-\symbol & definition & unit
-\hline
-n & 样本数量 & -
-x_i & 第i个样本特征向量 & -
-y_i & 第i个样本标签 & -
-theta & 模型参数 & -
-L & 损失函数 & -
-\hline
-\end{tabular}
+\\subsection{符号说明}
+\\begin{center}
+\\begin{tabular}{c l c}
+\\hline
+符号 & 含义 & 单位 \\\\
+\\hline
+$ & 时刻 & 元/kWh \\\\
+(p_t)$ & 价格 & 车次/小时 \\\\
+$\\eta$ & 价格弹性系数 & - \\\\
+$ & 运营商日收益 & 元 \\\\
+$ & 第 & - \\\\
+$\\alpha$ & 竞争效应参数 & - \\\\
+$ & 定价周期 & 小时 \\\\
+\\hline
+\\end{tabular}
+\\end{center}

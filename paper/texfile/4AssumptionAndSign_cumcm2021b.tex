@@ -1,23 +1,26 @@
 \newpage
 \section{假设与符号说明}
 
-\subsection{假设}
+\subsection{基本假设}
 \begin{enumerate}
-\item 数据完整性假设：原始数据无系统性缺失，异常值可通过统计方法识别处理
-\item 独立性假设：各观测样本之间相互独立，不存在时间或空间自相关
-\item 稳定性假设：模型参数在考察期间保持稳定，环境因素变化可控
-\item 合理性假设：模型求解结果符合实际情况和物理约束
+    \item 交通流数据采样频率为5分钟，能够捕捉短时波动特征
+    \item 相邻路口的交通流存在显著相关性，可通过图结构刻画
+    \item 信号控制周期固定，相位切换无延迟
+    \item 车辆排队服从确定性演化模型，忽略随机到达效应
 \end{enumerate}
 
 \subsection{符号说明}
-\begin{tabular}{lll}
+\begin{center}
+\begin{tabular}{c l c}
 \hline
-\symbol & definition & unit
+符号 & 含义 & 单位 \\
 \hline
-n & 样本数量 & -
-x_i & 第i个样本特征向量 & -
-y_i & 第i个样本标签 & -
-theta & 模型参数 & -
-L & 损失函数 & -
+$A_i^k(t)$ & 时刻$t$第$k$相位第$i$方向的累计到达车辆数 & 辆 \\
+$D_i^k(t)$ & 时刻$t$第$k$相位第$i$方向的累计离开车辆数 & 辆 \\
+$q_i^k$ & 第$k$相位第$i$方向的饱和度 & - \\
+$g_i^k$ & 第$k$相位第$i$方向的绿灯时长 & s \\
+$Q_i(t)$ & 第$i$方向的排队长度 & 辆 \\
+$L$ & 总延误时间 & 辆·s \\
 \hline
 \end{tabular}
+\end{center}

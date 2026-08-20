@@ -1,22 +1,11 @@
-\\newpage
-\\section{问题分析}
+\newpage
+\section{问题分析}
 
-\\subsection{问题一分析}
-交通流时间序列具有复杂的动态特征：
-\\begin{enumerate}
-    \\item \\textbf{周期性}：日周期（早晚高峰）和周周期（工作日/周末）
-    \\item \\textbf{趋势性}：长期增长或下降趋势
-    \\item \\textbf{随机性}：天气、事件等随机因素影响
-\\end{enumerate}
-STL分解可以将序列分解为趋势项、季节项和残差项。
+\subsection{问题一分析}
+交通流数据具有显著的\textbf{时空相关性}——相邻路口的流量相互影响，同一路口不同时段也存在自相关性。我们需要从数据中提取时空特征，为后续预测和控制提供输入。
 
-\\subsection{问题二分析}
-Transformer模型的核心是Self-Attention机制，能够捕捉序列中的长距离依赖关系。对于交通流预测，我们需要：
-\\begin{itemize}
-    \\item 合理设计输入序列长度
-    \\item 处理多变量输入（时间、日期、天气等）
-    \\item 设计合适的损失函数
-\\end{itemize}
+\subsection{问题二分析}
+多路口协同控制是\textbf{大规模组合优化}问题。相位差优化变量是连续量（每个路口的延迟时间），约束包括绿波带宽、最小红黄灯时间等。我们采用改进的遗传算法求解。
 
-\\subsection{问题三分析}
-对比实验需要设计合理的评估指标（MAE、RMSE、MAPE）和 baseline 方法（ARIMA、LSTM），确保对比的公平性和科学性。
+\subsection{问题三分析}
+强化学习控制的关键是\textbf{状态-动作-奖励}设计：状态包含各方向排队长度和相位信息，动作为相位切换和绿灯时长调整，奖励为负总延误时间。Q-learning适合离散动作空间，DQN适合连续动作空间。

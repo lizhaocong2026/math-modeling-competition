@@ -1,23 +1,29 @@
-\newpage
-\section{假设与符号说明}
+\\newpage
+\\section{假设与符号说明}
 
-\subsection{假设}
-\begin{enumerate}
-\item 数据完整性假设：原始数据无系统性缺失，异常值可通过统计方法识别处理
-\item 独立性假设：各观测样本之间相互独立，不存在时间或空间自相关
-\item 稳定性假设：模型参数在考察期间保持稳定，环境因素变化可控
-\item 合理性假设：模型求解结果符合实际情况和物理约束
-\end{enumerate}
+\\subsection{基本假设}
+\\begin{enumerate}
+    \\item 发酵过程在恒温条件下进行，温度波动对反应速率的影响忽略不计
+    \\item 反应体系为均相溶液，不存在传质限制
+    \\item 原料配比和初始浓度已知且稳定
+    \\item 测量误差服从正态分布，无系统性偏差
+    \\item 菌体生长符合Monod动力学模型
+\\end{enumerate}
 
-\subsection{符号说明}
-\begin{tabular}{lll}
-\hline
-\symbol & definition & unit
-\hline
-n & 样本数量 & -
-x_i & 第i个样本特征向量 & -
-y_i & 第i个样本标签 & -
-theta & 模型参数 & -
-L & 损失函数 & -
-\hline
-\end{tabular}
+\\subsection{符号说明}
+\\begin{center}
+\\begin{tabular}{c l c}
+\\hline
+符号 & 含义 & 单位 \\\\
+\\hline
+$ & 底物（糖度）浓度 & g/L \\\\
+$ & 乙醇浓度 & g/L \\\\
+{Ac}$ & 乙酸浓度 & g/L \\\\
+$ & 菌体浓度 & g/L \\\\
+$ & 第 & L/(mol·min) \\\\
+{P/S}$ & 产物对底物的产率 & - \\\\
+$\\mu$ & 比生长速率 & 1/min \\\\
+$ & 发酵时间 & min \\\\
+\\hline
+\\end{tabular}
+\\end{center}

@@ -1,0 +1,56 @@
+w("4AssumptionAndSign_cumcm2021a.tex", """\\newpage
+\\section{假设与符号说明}
+
+\\subsection{基本假设}
+\\begin{enumerate}
+    \\item 频率测量数据完整，传感器噪声服从零均值正态分布
+    \\item 储能系统充放电效率恒定，不计自放电损耗
+    \\item 调频市场价格相对稳定，历史数据可代表未来趋势
+    \\item 储能系统寿命与循环次数呈线性衰减关系
+\\end{enumerate}
+
+\\subsection{符号说明}
+\\begin{center}
+\\begin{tabular}{c l c}
+\\hline
+符号 & 含义 & 单位 \\\\
+\\hline
+$f(t)$ & 时刻$t$的系统频率 & Hz \\\\
+$\\Delta f$ & 频率偏差 & Hz \\\\
+$P_{ess}(t)$ & 储能系统输出功率 & MW \\\\
+$E_{ess}$ & 储能系统容量 & MWh \\\\
+$K, \\tau$ & 频域模型参数 & - \\\\
+$C_{cycle}$ & 单次循环成本 & 元/次 \\\\
+$P_{FCAS}$ & 调频服务价格 & 元/MW\\\\
+\\hline
+\\end{tabular}
+\\end{center}
+""")
+
+w("4AssumptionAndSign_cumcm2021b.tex", """\\newpage
+\\section{假设与符号说明}
+
+\\subsection{基本假设}
+\\begin{enumerate}
+    \\item 交通流数据采样频率为5分钟，能够捕捉短时波动特征
+    \\item 相邻路口的交通流存在显著相关性，可通过图结构刻画
+    \\item 信号控制周期固定，相位切换无延迟
+    \\item 车辆排队服从确定性演化模型，忽略随机到达效应
+\\end{enumerate}
+
+\\subsection{符号说明}
+\\begin{center}
+\\begin{tabular}{c l c}
+\\hline
+符号 & 含义 & 单位 \\\\
+\\hline
+$A_i^k(t)$ & 时刻$t$第$k$相位第$i$方向的累计到达车辆数 & 辆 \\\\
+$D_i^k(t)$ & 时刻$t$第$k$相位第$i$方向的累计离开车辆数 & 辆 \\\\
+$q_i^k$ & 第$k$相位第$i$方向的饱和度 & - \\\\
+$g_i^k$ & 第$k$相位第$i$方向的绿灯时长 & s \\\\
+$Q_i(t)$ & 第$i$方向的排队长度 & 辆 \\\\
+$L$ & 总延误时间 & 辆·s \\\\
+\\hline
+\\end{tabular}
+\\end{center}
+""")

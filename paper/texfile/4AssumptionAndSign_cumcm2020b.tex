@@ -1,23 +1,29 @@
-\newpage
-\section{假设与符号说明}
+\\newpage
+\\section{假设与符号说明}
 
-\subsection{假设}
-\begin{enumerate}
-\item 数据完整性假设：原始数据无系统性缺失，异常值可通过统计方法识别处理
-\item 独立性假设：各观测样本之间相互独立，不存在时间或空间自相关
-\item 稳定性假设：模型参数在考察期间保持稳定，环境因素变化可控
-\item 合理性假设：模型求解结果符合实际情况和物理约束
-\end{enumerate}
+\\subsection{基本假设}
+\\begin{enumerate}
+    \\item 用户选择充电站遵循最短路径原则，不考虑导航偏差
+    \\item 充电站服务半径为固定值，超出半径的用户不再选择该站点
+    \\item 电网容量充足，建站不受供电能力限制
+    \\item 建设成本与充电桩数量成线性关系
+    \\item 需求强度指数可准确反映各区域充电需求
+\\end{enumerate}
 
-\subsection{符号说明}
-\begin{tabular}{lll}
-\hline
-\symbol & definition & unit
-\hline
-n & 样本数量 & -
-x_i & 第i个样本特征向量 & -
-y_i & 第i个样本标签 & -
-theta & 模型参数 & -
-L & 损失函数 & -
-\hline
-\end{tabular}
+\\subsection{符号说明}
+\\begin{center}
+\\begin{tabular}{c l c}
+\\hline
+符号 & 含义 & 单位 \\\\
+\\hline
+$ & 第 & - \\\\
+{ij}$ & 需求点 & km \\\\
+$ & 服务半径 & km \\\\
+$ & 需求点 & - \\\\
+$ & 站点 & 0-1 \\\\
+$ & 站点 & 万元 \\\\
+$ & 覆盖的需求点数量 & 个 \\\\
+$ & 需求强度指数 & - \\\\
+\\hline
+\\end{tabular}
+\\end{center}

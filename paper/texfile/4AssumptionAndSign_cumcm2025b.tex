@@ -1,24 +1,31 @@
 \newpage
 \section{假设与符号说明}
 
-\subsection{假设}
-\begin{itemize}
-\item 交通流量在相邻时间点具有连续性
-\item 道路结构在预测时段内不变
-\item 传感器数据质量可靠，缺失值可通过插值补全
-\item 工作日与周末交通模式存在显著差异
-\end{itemize}
+\subsection{基本假设}
+\begin{enumerate}
+    \item 变压器运行数据采样频率满足故障特征提取要求，油色谱数据滞后时间已知
+    \item 故障样本的标签准确可靠，不存在标注错误
+    \item 局部放电信号在测量过程中不受外部电磁干扰的显著影响
+    \item 变压器退化过程满足Markov性，当前状态仅依赖上一状态
+    \item 维护成本参数（检修费、停电损失）可根据历史数据估计
+\end{enumerate}
 
 \subsection{符号说明}
-\begin{tabular}{lll}
+\begin{center}
+\begin{tabular}{c l c}
 \hline
-\symbol & definition & unit
+符号 & 含义 & 单位 \\
 \hline
-v_i & 交叉口节点i & -
-e_ij & 连接节点i,j的边 & -
-X_v & 节点v的特征向量 & -
-h_v^{(l)} & 节点v在第l层的消息嵌入 & -
-N(v) & 节点v的邻居集合 & -
-hat{y}_t & t时刻的预测流量 & veh/min
+$C_i$ & 油中溶解气体$i$的浓度 & $\mu$L/L \\
+$R_{ij}$ & Duval三角图中的气体比值 & - \\
+$X^{(k)}$ & 第$k$种数据源的特征向量 & - \\
+$h_v^{(l)}$ & 图神经网络第$l$层节点$v$的嵌入 & - \\
+$y_v$ & 节点$v$的故障类型标签 & - \\
+$RUL$ & 剩余使用寿命 & 年 \\
+$t_{\text{fail}}$ & 故障发生时刻 & 年 \\
+$C_{\text{maint}}$ & 单次维护成本 & 万元 \\
+$C_{\text{outage}}$ & 停电损失成本 & 万元/次 \\
+$\theta$ & 退化过程参数 & - \\
 \hline
 \end{tabular}
+\end{center}

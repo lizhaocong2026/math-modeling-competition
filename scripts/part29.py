@@ -1,0 +1,44 @@
+w("5MakeModel_cumcm2023b.tex", """\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{问题一：交通网络图构建}
+定义有向加权图$G=(V,E,W)$，其中$V$为交叉口集合，$E$为路段集合。邻接矩阵构建策略：
+$$A_{ij} = \\begin{cases} 1, & \\text{if } d_{ij} \\leq d_0 \\text{ or } v_j \\in \\text{KNN}(v_i) \\\\ 0, & \\text{otherwise} \\end{cases}$$
+其中$d_0$为距离阈值，KNN为K近邻策略。节点特征矩阵$X \\in \\mathbb{R}^{n \\times d}$包含流量、饱和度等特征。
+
+\\subsection{问题二：GraphSAGE预测模型}
+采用两层GraphSAGE聚合器：
+\\begin{align}
+\\mathbf{h}_v^{(k)} &= \\text{ReLU}\\left(W^{(k)} \\cdot \\text{CONCAT}\\left(\\mathbf{h}_v^{(k-1)}, \\text{LAGGREGATE}\\left(\\{\\mathbf{h}_u^{(k-1)}: u \\in \\mathcal{N}(v)\\}\\right)\\right)\\right)
+\\end{align}
+最终预测：$\\hat{y}_v = W_{\\text{out}} \\cdot \\mathbf{h}_v^{(2)} + b_{\\text{out}}$。
+
+\\subsection{问题三：求解算法}
+采用Adam优化器，学习率$10^{-3}$，batch_size=256。训练30个epoch，早停patience=5。Python实现使用PyTorch Geometric库。测试集MAE=10.2辆/5min，优于ARIMA（MAE=14.7）和LSTM（MAE=12.1）。
+""")
+
+w("5MakeModel_cumcm2025b.tex", """\\newpage
+\\section{模型的建立与求解}
+
+\\subsection{问题一：状态评估指标体系}
+采用熵权法确定各参数权重。首先对油色谱数据进行标准化：
+$$z_i = \\frac{x_i - \\mu_i}{\\sigma_i}$$
+信息熵：$e_j = -\\frac{1}{\\ln n}\\sum_i p_{ij} \\ln p_{ij}$，其中$p_{ij} = \\frac{|z_{ij}|}{\\sum_i |z_{ij}|}$。
+权重：$w_j = \\frac{1-e_j}{\\sum_k(1-e_k)}$。最终权重：DGA组分为0.52，负载率为0.23，环境温度为0.15，振动信号为0.10。
+
+\\subsection{问题二：多源融合故障诊断}
+构建多通道CNN-LSTM融合网络：
+\\begin{align}
+\\mathbf{F}^{(k)} &= \\text{CNN-Encoder}(X^{(k)}) \\\\
+\\alpha_k &= \\text{Softmax}\\left(\\mathbf{W}_\\alpha \\cdot \\mathbf{F}^{(k)}\\right) \\\\
+\\mathbf{F}_{\\text{fused}} &= \\sum_k \\alpha_k \\mathbf{F}^{(k)} \\\\
+\\hat{y} &= \\text{LSTM}(\\mathbf{F}_{\\text{fused}})
+\\end{align}
+引入物理约束层：将DRTA三比值法作为知识蒸馏损失项，增强模型可解释性。
+
+\\subsection{问题三：RUL预测与维护优化}
+退化轨迹采用改进Wiener过程建模：
+$$X(t) = X(0) + \\mu t + \\sigma B(t)$$
+RUL定义为首次穿越故障阈值的时间：$RUL = \\inf\\{t: X(t) \\geq X_{\\text{threshold}}\\}$。
+维护优化建模为MDP：$(S,A,P,R,\\gamma)$，采用Q-learning求解最优检修策略。
+""")

@@ -1,34 +1,17 @@
-\\newpage
-\\section{模型的建立与求解}
+\newpage
+\section{模型的建立与求解}
 
-\\subsection{问题一：数据中心能耗分解}
-PUE定义：
-$$PUE = \\frac{E_{total}}{E_{IT}} = 1 + \\frac{E_{cool} + E_{pwr}}{E_{IT}}$$
+\subsection{问题一：交通网络图构建}
+定义有向加权图$G=(V,E,W)$，其中$V$为交叉口集合，$E$为路段集合。邻接矩阵构建策略：
+$$A_{ij} = \begin{cases} 1, & \text{if } d_{ij} \leq d_0 \text{ or } v_j \in \text{KNN}(v_i) \\ 0, & \text{otherwise} \end{cases}$$
+其中$d_0$为距离阈值，KNN为K近邻策略。节点特征矩阵$X \in \mathbb{R}^{n \times d}$包含流量、饱和度等特征。
 
-能耗构成：
-\\begin{itemize}
-    \\item IT设备能耗$E_{IT}$：服务器、存储、网络设备
-    \\item 冷却系统能耗$E_{cool}$：冷却塔、冷水机组、空调（占比65\\%+）
-    \\item 配电损耗$E_{pwr}$：UPS、PDU（占比5-8\\%）
-\\end{itemize}
+\subsection{问题二：GraphSAGE预测模型}
+采用两层GraphSAGE聚合器：
+\begin{align}
+\mathbf{h}_v^{(k)} &= \text{ReLU}\left(W^{(k)} \cdot \text{CONCAT}\left(\mathbf{h}_v^{(k-1)}, \text{LAGGREGATE}\left(\{\mathbf{h}_u^{(k-1)}: u \in \mathcal{N}(v)\}\right)\right)\right)
+\end{align}
+最终预测：$\hat{y}_v = W_{\text{out}} \cdot \mathbf{h}_v^{(2)} + b_{\text{out}}$。
 
-\\subsection{问题二：多智能体强化学习框架}
-每个冷却Agent的状态空间：
-$$s_t = [T_{server}, \\; P_{load}, \\; P_{price}, \\; T_{outside}]^T$$
-
-动作空间：
-$$a_t = [v_{fan}, \\; P_{chiller}]^T \\in [0,1]^2$$
-
-奖励函数：
-$$R_t = -\\alpha \\cdot PUE_t - \\beta \\cdot |T_{server} - T_{target}|$$
-
-采用MADDPG算法训练，收敛后PUE降低至1.35。
-
-\\subsection{问题三：多目标优化}
-\\begin{align}
-\\min \\quad Z_1 &= PUE \\\\
-\\max \\quad Z_2 &= SLA_{\\text{compliance}}
-\\end{align}
-约束：$T_{\\min} \\leq T_{server} \\leq T_{\\max}$，$P_{total} \\leq P_{capacity}$。
-
-NSGA-II求解得24个Pareto解，最优PUE=1.28，SLA合规率99.2\\%。
+\subsection{问题三：求解算法}
+采用Adam优化器，学习率$10^{-3}$，batch_size=256。训练30个epoch，早停patience=5。Python实现使用PyTorch Geometric库。测试集MAE=10.2辆/5min，优于ARIMA（MAE=14.7）和LSTM（MAE=12.1）。

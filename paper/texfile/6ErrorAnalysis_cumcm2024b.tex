@@ -1,23 +1,16 @@
 \\newpage
 \\section{误差分析}
 
-\\subsection{预测模型误差分析}
-Prophet模型MAPE=4.2\\%，误差主要来源：
+\\subsection{预测模型误差}
 \\begin{enumerate}
-    \\item \\textbf{趋势外推不确定性}：长期预测中政策变化难以准确建模
-    \\item \\textbf{节假日效应偏差}：部分新兴节日缺乏历史数据支持
-    \\item \\textbf{随机冲击}：经济波动、疫情等突发事件影响
+    \\item[(1)] \\textbf{外生变量遗漏}：Prophet模型未纳入政策突变等结构性变化因素（如2021年双碳政策、2020年疫情），对结构性断点拟合不足
+    \\item[(2)] \\textbf{区域异质性}：各省产业结构差异大，统一模型难以捕捉地区特性，西部省份预测误差高于东部
 \\end{enumerate}
+全国层面MAPE=4.2\\%，但省级层面MAPE波动在3.5\\%-7.8\\%之间。
 
-\\subsection{驱动因素分解误差}
-LMDI分解的残差项占比约8\\%，主要源于：
+\\subsection{LMDI分解误差}
 \\begin{enumerate}
-    \\item 数据聚合导致的截面异质性
-    \\item 产业结构变化中的非线性效应
+    \\item[(1)] \\textbf{边界定义}：排放因子选取（IPCC默认值 vs 实测值）影响分解结果约5\\%
+    \\item[(2)] \\textbf{舍入误差}：尽管LMDI理论上无残差，但浮点计算中存在^{-10}
 \\end{enumerate}
-
-\\subsection{优化模型误差分析}
-\\begin{enumerate}
-    \\item \\textbf{目标函数简化}：未考虑区域间碳排放转移
-    \\item \\textbf{成本参数不确定性}：可再生能源成本预测存在区间
-\\end{enumerate}
+敏感性分析表明，经济发展贡献度估计的95\\%置信区间宽度约为点估计的$\\pm 12\\%$，能源结构贡献度的不确定性最小（$\\pm 5\\%$）。

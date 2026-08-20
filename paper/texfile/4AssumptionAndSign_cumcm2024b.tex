@@ -1,23 +1,28 @@
-\newpage
-\section{假设与符号说明}
+\\newpage
+\\section{假设与符号说明}
 
-\subsection{假设}
-\begin{enumerate}
-\item 数据完整性假设：原始数据无系统性缺失，异常值可通过统计方法识别处理
-\item 独立性假设：各观测样本之间相互独立，不存在时间或空间自相关
-\item 稳定性假设：模型参数在考察期间保持稳定，环境因素变化可控
-\item 合理性假设：模型求解结果符合实际情况和物理约束
-\end{enumerate}
+\\subsection{基本假设}
+\\begin{enumerate}
+    \\item 历史碳排放数据完整，不存在系统性测量误差
+    \\item Prophet模型的changepoint先验分布合理，能捕捉主要趋势变化
+    \\item LMDI分解的统计口径一致，各因子定义清晰无重叠
+    \\item 减排策略可行性约束（如可再生能源渗透率上限）已知
+    \\item 碳交易市场价格外生给定，本省无法影响市场价格
+\\end{enumerate}
 
-\subsection{符号说明}
-\begin{tabular}{lll}
-\hline
-\symbol & definition & unit
-\hline
-n & 样本数量 & -
-x_i & 第i个样本特征向量 & -
-y_i & 第i个样本标签 & -
-theta & 模型参数 & -
-L & 损失函数 & -
-\hline
-\end{tabular}
+\\subsection{符号说明}
+\\begin{center}
+\\begin{tabular}{c l c}
+\\hline
+符号 & 含义 & 单位 \\\\
+\\hline
+$ & 时刻 & 万吨CO$ \\\\
+$\\hat{C}_t$ & 碳排放预测值 & 万吨CO$ \\\\
+, GDP/P, E/GDP, C/E$ & LMDI分解的人口、人均GDP、能源强度、碳排放强度因子 & - \\\\
+$\\Delta C_{\\text{eco}}, \\Delta C_{\\text{struc}}, \\Delta C_{\\text{intensity}}$ & 各驱动因子贡献量 & 万吨CO$ \\\\
+$\\tau$ & 碳达峰年份 & 年 \\\\
+, Z_2, Z_3$ & 经济成本、能源安全、碳排放多目标 & - \\\\
+$ & 熵权法确定的目标权重 & - \\\\
+\\hline
+\\end{tabular}
+\\end{center}

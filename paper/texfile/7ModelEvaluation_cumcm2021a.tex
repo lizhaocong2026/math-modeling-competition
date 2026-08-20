@@ -1,23 +1,18 @@
-\\newpage
-\\section{模型评价}
+\newpage
+\section{模型评价}
 
-\\subsection{模型优点}
-\\begin{itemize}
-    \\item \\textbf{算法有效}：NSGA-II能较好处理多目标冲突
-    \\item \\textbf{结果直观}：Pareto前沿提供多种选择方案
-    \\item \\textbf{计算可行}：算法在合理时间内收敛
-\\end{itemize}
+\subsection{频域模型评价}
+\begin{itemize}
+    \item \textbf{拟合精度}：一阶惯性模型在0-5Hz频段内的拟合误差<5\%
+    \item \textbf{响应速度}：储能系统频响时间常数约0.5s，满足调频快速响应要求
+\end{itemize}
 
-\\subsection{模型缺点}
-\\begin{itemize}
-    \\item \\textbf{距离简化}：欧氏距离与实际路网距离有偏差
-    \\item \\textbf{静态假设}：未考虑需求动态变化
-    \\item \\textbf{计算复杂}：大规模问题求解时间较长
-\\end{itemize}
+\subsection{容量配置评价}
+\begin{itemize}
+    \item \textbf{经济性}：最优容量配置方案内部收益率IRR=18.7\%，投资回收期约5.2年
+    \item \textbf{可靠性}：在95\%置信水平下，储能系统可满足调频需求
+\end{itemize}
 
-\\subsection{改进方向}
-\\begin{enumerate}
-    \\item 使用实际路网距离替代欧氏距离
-    \\item 引入动态需求预测模型
-    \\item 开发分布式算法加速大规模计算
-\\end{enumerate}
+\subsection{模型优缺点}
+\textbf{优点}：MPC框架能处理多约束优化，滚动求解适应实时调度需求。
+\textbf{缺点}：一阶模型精度有限，高阶模型辨识复杂；市场价格预测不确定性大。

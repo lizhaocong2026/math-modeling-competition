@@ -1,12 +1,17 @@
-\\newpage
-\\section{误差分析}
+\newpage
+\section{误差分析}
 
-\\subsection{参数估计误差}
-\\begin{enumerate}
-    \\item \\textbf{初始值敏感}：LM算法对初始速率常数敏感，需多次尝试
-    \\item \\textbf{测量噪声}：浓度测量误差约\\pm 3\\%，影响参数精度
-\\end{enumerate}
-置信区间分析表明，$k_1$和$k_3$的估计精度较高（95\\%CI宽度<10\\%），而$k_5$精度较低。
+\subsection{参数估计误差}
+\begin{enumerate}
+    \item[(1)] \textbf{初始值敏感}：LM算法对初始速率常数敏感，需多次随机初始化尝试，取最优结果
+    \item[(2)] \textbf{测量噪声}：浓度测量误差约$\pm 3\%$，通过最小二乘拟合平滑处理
+    \item[(3)] \textbf{模型结构}：等温假设忽略了温度波动对反应速率的影响，实际发酵罐存在$\pm 1^\circ
+\end{enumerate}
+置信区间分析表明，（95\%CI宽度<10\%），而（CI宽度约25\%）。
 
-\\subsection{模型验证误差}
-交叉验证RMSE=0.034，残差呈正态分布，模型拟合良好。
+\subsection{模型验证误差}
+\begin{enumerate}
+    \item[(1)] \textbf{交叉验证}：5折交叉验证RMSE=0.034，残差呈正态分布，模型拟合良好
+    \item[(2)] \textbf{外推风险}：模型仅在实验条件范围内验证，外推至不同温度/菌种时可能失效
+\end{enumerate}
+敏感性分析：速率常数$\pm 10\%\%，模型对。

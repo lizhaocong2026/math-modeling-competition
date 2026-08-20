@@ -1,0 +1,110 @@
+"""
+Transformer Ensemble for time series forecasting
+Combines multiple Transformer variants for improved accuracy
+"""
+import numpy as np
+from typing import Dict, Any, List, Optional
+import math
+from transformer import SimpleTransformer
+
+
+class TransformerEnsemble:
+    """
+    Ensemble of SimpleTransformer models with different hyperparameters
+    
+    Suitable for: 多模型融合预测，提升预测稳定性
+    """
+    
+    def __init__(self, n_estimators=3, seed=42):
+        self.n_estimators = n_estimators
+        self.seed = seed
+        self.models = []
+        self.weights = None
+        self.history = []
+        np.random.seed(seed)
+    
+    def fit(self, X, y, epochs=20, verbose=False):
+        self.models = []
+        configs = [
+            {"d_model": 32, "nhead": 2, "num_layers": 1, "seq_len": min(24, X.shape[1])},
+            {"d_model": 64, "nhead": 4, "num_layers": 2, "seq_len": min(48, X.shape[1])},
+            {"d_model": 48, "nhead": 3, "num_layers": 1, "seq_len": min(36, X.shape[1])},
+        ][:self.n_estimators]
+        
+        for i, cfg in enumerate(configs):
+            model = SimpleTransformer(**cfg)
+            model.fit(X, y, epochs=epochs)
+            self.models.append(model)
+        
+        preds = np.array([m.predict(X).flatten() for m in self.models])
+        errors = np.array([(y[:preds.shape[-1]] - p[:len(y)])**2 for p in preds]).mean(axis=-1)
+        inv_errors = 1.0 / (errors + 1e-8)
+        self.weights = inv_errors / inv_errors.sum()
+        return self
+    
+    def predict(self, X):
+        preds = np.array([m.predict(X).flatten() for m in self.models])
+        return (preds * self.weights[:, np.newaxis]).sum(axis=0)
+    
+    def predict_steps(self, X, steps=24):
+        predictions = []
+        current_X = X.copy()
+        for _ in range(steps):
+            pred = self.predict(current_X)
+            predictions.append(pred[-1] if pred.ndim > 0 else pred)
+            new_feat = pred[-1:].reshape(1, 1, 1) if pred.ndim > 0 else np.array([[pred]])
+            current_X = np.concatenate([current_X[:, 1:, :], new_feat], axis=1)
+        return np.array(predictions)
+    
+    def predict_interval(self, X, confidence=0.95):
+        preds = np.array([m.predict(X).flatten() for m in self.models])
+        mean_pred = (preds * self.weights[:, np.newaxis]).sum(axis=0)
+        std_pred = np.std(preds, axis=0)
+        z = 1.96
+        return {"mean": mean_pred, "lower": mean_pred - z * std_pred,
+                "upper": mean_pred + z * std_pred, "std": std_pred}
+
+
+class LSTMTransformerHybrid:
+    """LSTM-Transformer hybrid for time series forecasting"""
+    
+    def __init__(self, lstm_units=32, d_model=32, nhead=2, seed=42):
+        self.lstm_units = lstm_units
+        self.transformer = SimpleTransformer(d_model=d_model, nhead=nhead)
+        self.rng = np.random.RandomState(seed)
+    
+    def _lstm_cell(self, x, h_prev, c_prev):
+        gate_input = np.concatenate([x, h_prev], axis=-1)
+        W = self.rng.randn(self.lstm_units, self.lstm_units * 2 + 1) * 0.01
+        f = 1.0 / (1.0 + np.exp(-gate_input @ W[:self.lstm_units, :]))
+        i = 1.0 / (1.0 + np.exp(-gate_input @ W[:, :self.lstm_units]))
+        c_tilde = np.tanh(gate_input @ W[:, -self.lstm_units:])
+        c_new = f * c_prev + i * c_tilde
+        o = 1.0 / (1.0 + np.exp(-gate_input @ W[:, :self.lstm_units]))
+        h_new = o * np.tanh(c_new)
+        return h_new, c_new, W
+    
+    def fit(self, X, y, epochs=15):
+        seq_len = X.shape[1]
+        h = np.zeros((1, self.lstm_units))
+        c = np.zeros((1, self.lstm_units))
+        lstm_output = []
+        for t in range(seq_len):
+            xt = X[0, t:t+1, :]
+            h, c, _ = self._lstm_cell(xt, h, c)
+            lstm_output.append(h.flatten())
+        lstm_features = np.array(lstm_output).reshape(1, seq_len, self.lstm_units)
+        self.transformer.fit(lstm_features, y, epochs=epochs)
+        return self
+    
+    def predict(self, X):
+        seq_len = X.shape[1]
+        h = np.zeros((1, self.lstm_units))
+        c = np.zeros((1, self.lstm_units))
+        lstm_out = []
+        for t in range(seq_len):
+            xt = X[0, t:t+1, :]
+            h, c, _ = self._lstm_cell(xt, h, c)
+            lstm_out.append(h.flatten())
+        lstm_features = np.array(lstm_out).reshape(1, seq_len, self.lstm_units)
+        return self.transformer.predict(lstm_features)

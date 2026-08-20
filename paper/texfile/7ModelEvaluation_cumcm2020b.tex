@@ -1,23 +1,18 @@
 \\newpage
 \\section{模型评价}
 
-\\subsection{模型优点}
+\\subsection{需求评估评价}
 \\begin{itemize}
-    \\item \\textbf{理论严谨}：基于博弈论框架，有严格的数学推导
-    \\item \\textbf{实用性强}：结果可直接用于定价决策
-    \\item \\textbf{可扩展性}：可扩展到多竞争者场景
+    \\item \\textbf{综合性}：多源数据融合的需求指数比单一指标更能反映真实需求，与实地调研结果相关系数达0.82
+    \\item \\textbf{可视化}：热力图直观展示需求空间分布，便于规划决策者快速识别高需求区域
 \\end{itemize}
 
-\\subsection{模型缺点}
+\\subsection{选址模型评价}
 \\begin{itemize}
-    \\item \\textbf{假设简化}：忽略了用户偏好异质性
-    \\item \\textbf{静态假设}：未考虑动态定价场景
-    \\item \\textbf{数据依赖}：需要大量历史数据校准参数
+    \\item \\textbf{覆盖率}：最优方案覆盖87\\%以上的需求点，较随机布局提升35个百分点，较贪心算法提升8个百分点
+    \\item \\textbf{公平性}：基尼系数从0.42降至0.28，空间均衡性显著改善，城乡差距缩小
 \\end{itemize}
 
-\\subsection{改进方向}
-\\begin{enumerate}
-    \\item 引入深度学习方法捕捉非线性关系
-    \\item 考虑动态定价和预约机制
-    \\item 加入用户满意度等多目标因素
-\\end{enumerate}
+\\subsection{模型优缺点}
+\\textbf{优点}：多目标优化平衡了效率与公平，NSGA-II求解效率高，结果直观可用。
+\\textbf{缺点}：未考虑电网扩容成本和土地获取难度，实际建设可能需要调整方案；静态模型未考虑需求随时间的变化。

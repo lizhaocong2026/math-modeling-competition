@@ -1,15 +1,15 @@
-\\newpage
-\\section{误差分析}
+\newpage
+\section{误差分析}
 
-\\subsection{需求预测误差}
-\\begin{enumerate}
-    \\item \\textbf{模型假设}：ARIMA假设数据平稳，节假日前后可能有结构性变化
-    \\item \\textbf{预测区间}：95\\%预测区间宽度约\\pm 15\\%，在极端天气下可能扩大
-\\end{enumerate}
+\subsection{需求预测误差}
+\begin{enumerate}
+    \item[(1)] \textbf{数据代理偏差}：手机信令数据只能反映部分人群的充电行为，年轻用户占比高，老年用户可能被低估约15\%
+    \item[(2)] \textbf{空间分辨率}：数据粒度为街区级，无法精确到单个路段，需求热点边界模糊
+\end{enumerate}
 
-\\subsection{选址模型误差}
-\\begin{enumerate}
-    \\item \\textbf{服务半径假设}：固定服务半径忽略了实际行驶距离和拥堵
-    \\item \\textbf{需求确定性}：将需求视为确定值，实际存在随机波动
-\\end{enumerate}
-蒙特卡洛仿真表明，考虑需求不确定性后，覆盖率从92\\%降至87\\%。
+\subsection{选址模型误差}
+\begin{enumerate}
+    \item[(1)] \textbf{覆盖模型简化}：基于欧氏距离的服务半径假设与实际情况有偏差，实际出行路径受路网约束，有效服务半径缩小约20\%
+    \item[(2)] \textbf{竞争忽略}：模型未考虑现有充电站的竞争分流效应，高估了新建站点的需求获取量
+\end{enumerate}
+敏感性分析表明，服务半径参数每变化0.1km，覆盖率变化约1.5个百分点，模型对该参数中等敏感。

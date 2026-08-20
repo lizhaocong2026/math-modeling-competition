@@ -1,0 +1,31 @@
+# === 3 ProblemAnalysis 2025B ===
+w("3ProblemAnalysis_cumcm2025b.tex", """\\newpage
+\\section{问题分析}
+
+\\subsection{问题一分析}
+本题要求建立变压器状态评估指标体系，属于\\textbf{多指标综合评价}问题。油中溶解气体（DGA）是变压器故障诊断的经典指标，其中H2、CH4、C2H2、C2H4、C2H6、CO、CO2是关键组分。不同故障类型对应不同的气体产生特征：
+\\begin{itemize}
+    \\item 局部过热：C2H4/C2H6比值升高
+    \\item 放电故障：C2H2含量显著增加
+    \\item 绝缘老化：CO和CO2持续上升
+\\end{itemize}
+我们需要通过相关性分析（Pearson/Spearman）确定各参数与故障状态的关系，再采用熵权法或AHP确定权重。
+
+\\subsection{问题二分析}
+本题是\\textbf{多源异构数据融合分类}问题。三种数据源具有不同的采样频率和时间尺度：局部放电（微秒级）、油色谱（小时级）、振动信号（毫秒级）。我们提出以下思路：
+\\begin{enumerate}
+    \\item 分别提取各数据源的特征向量（时域/频域特征）
+    \\item 构建注意力机制加权的多通道CNN-LSTM融合网络
+    \\item 引入物理约束层（如DRTA三比值法的知识蒸馏）提升可解释性
+\\end{enumerate}
+最终输出故障类型概率分布，支持多分类任务。
+
+\\subsection{问题三分析}
+本题是\\textbf{剩余寿命预测+维护优化}问题。RUL预测采用PHM（Prognostics and Health Management）框架，以退化轨迹建模为核心。我们考虑：
+\\begin{itemize}
+    \\item 使用改进的Gamma过程或Wiener过程建模绝缘老化退化轨迹
+    \\item 结合深度学习提取退化特征，建立数据驱动-机理模型混合框架
+    \\item 维护优化建模为马尔可夫决策过程（MDP），以全寿命周期成本最小化为目标
+\\end{itemize}
+最终输出最优检修时机和检修策略。
+""")

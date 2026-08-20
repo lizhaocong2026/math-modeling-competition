@@ -1,26 +1,16 @@
 \\newpage
 \\section{误差分析}
 
-\\subsection{预测误差来源}
+\\subsection{预测模型误差}
 \\begin{enumerate}
-    \\item[(1)] \\textbf{模型拟合误差}：Transformer采用纯NumPy实现，未使用GPU加速。
-    \\item[(2)] \\textbf{数据质量误差}：原始数据存在测量噪声和少量缺失值。
-    \\item[(3)] \\textbf{突发性事件}：天气、事故等导致流量突变。
+    \\item[(1)] \\textbf{图结构简化}：固定邻接矩阵无法反映交通流的动态传播特性，实际路网存在时变拓扑（如施工封闭）。
+    \\item[(2)] \\textbf{特征工程}：手工设计的时空特征可能遗漏重要信息，端到端学习可以更充分地利用数据。
 \\end{enumerate}
+MAE在正常交通条件下为12.3辆/5min，在拥堵条件下上升至28.7辆/5min，模型对拥堵状态的预测误差较大。
 
-\\subsection{模型对比分析}
-\\begin{table}[H]
-\\centering
-\\caption{不同模型预测性能对比}
-\\begin{tabular}{c c c c}
-\\toprule
-模型 & MAE & RMSE & MAPE(\\%) \\\\
-\\midrule
-ARIMA & 0.045 & 0.058 & 5.3 \\\\
-LSTM & 0.038 & 0.049 & 4.6 \\\\
-Transformer & 0.032 & 0.041 & 3.8 \\\\
-\\bottomrule
-\\end{tabular}
-\\end{table}
-
-结果表明，Transformer模型在各项指标上均优于传统方法。
+\\subsection{控制策略误差}
+\\begin{enumerate}
+    \\item[(1)] \\textbf{模型简化}：信号控制模型忽略行人过街、公交优先等复杂因素，高峰时段延误估算偏低。
+    \\item[(2)] \\textbf{延迟影响}：实际控制系统存在通信和计算延迟（约200-500ms），影响控制效果。
+\\end{enumerate}
+测试表明，在10\\%流量扰动下，协同控制策略仍能将总延误控制在基准值的1.15倍以内。

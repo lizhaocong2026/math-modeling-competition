@@ -1,23 +1,34 @@
 \newpage
 \section{假设与符号说明}
 
-\subsection{假设}
+\subsection{基本假设}
 \begin{enumerate}
-\item 数据完整性假设：原始数据无系统性缺失，异常值可通过统计方法识别处理
-\item 独立性假设：各观测样本之间相互独立，不存在时间或空间自相关
-\item 稳定性假设：模型参数在考察期间保持稳定，环境因素变化可控
-\item 合理性假设：模型求解结果符合实际情况和物理约束
+    \item 负荷数据完整有效，缺失值可通过线性插值补全，异常值符合3\sigma准则
+    \item 新能源发电数据（风电、光伏）可准确预测，预测误差服从正态分布
+    \item 储能系统充放电效率恒定，不计自放电损耗
+    \item 燃气机组和燃煤机组的出力调整速率在约束范围内线性变化
+    \item 用户侧负荷响应具有弹性，价格信号可引导部分负荷转移
 \end{enumerate}
 
 \subsection{符号说明}
-\begin{tabular}{lll}
+\begin{center}
+\begin{tabular}{c l c}
 \hline
-\symbol & definition & unit
+符号 & 含义 & 单位 \\
 \hline
-n & 样本数量 & -
-x_i & 第i个样本特征向量 & -
-y_i & 第i个样本标签 & -
-theta & 模型参数 & -
-L & 损失函数 & -
+$F_t$ & 时刻$t$的总负荷 & MW \\
+$T_t, S_t, R_t$ & STL分解的趋势项、季节项、残差项 & MW \\
+$Q, K, V$ & Self-Attention的查询、键、值矩阵 & - \\
+$d_k$ & 键向量维度 & - \\
+$h_t$ & 时刻$t$的状态向量 & - \\
+$P_{\text{load}}^t$ & 时刻$t$的负荷功率 & MW \\
+$P_{\text{wind}}^t, P_{\text{solar}}^t$ & 风电/光伏出力 & MW \\
+$E_{\text{bat}}^t$ & 储能SOC & MWh \\
+$u_{\text{gas}}^t, u_{\text{coal}}^t, u_{\text{bat}}^t$ & 各机组出力调整量 & MW \\
+$C_{\text{cost}}(t)$ & 时刻$t$的调度成本 & 元 \\
+$\alpha, \beta, \gamma$ & 奖励函数权重系数 & - \\
+$Z_1, Z_2, Z_3$ & 多目标的成本、消纳率、满意度 & - \\
+$N, G_{\max}$ & NSGA-II种群大小、最大迭代代数 & - \\
 \hline
 \end{tabular}
+\end{center}

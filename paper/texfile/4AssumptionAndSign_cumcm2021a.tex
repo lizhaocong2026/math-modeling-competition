@@ -1,23 +1,27 @@
 \newpage
 \section{假设与符号说明}
 
-\subsection{假设}
+\subsection{基本假设}
 \begin{enumerate}
-\item 数据完整性假设：原始数据无系统性缺失，异常值可通过统计方法识别处理
-\item 独立性假设：各观测样本之间相互独立，不存在时间或空间自相关
-\item 稳定性假设：模型参数在考察期间保持稳定，环境因素变化可控
-\item 合理性假设：模型求解结果符合实际情况和物理约束
+    \item 频率测量数据完整，传感器噪声服从零均值正态分布
+    \item 储能系统充放电效率恒定，不计自放电损耗
+    \item 调频市场价格相对稳定，历史数据可代表未来趋势
+    \item 储能系统寿命与循环次数呈线性衰减关系
 \end{enumerate}
 
 \subsection{符号说明}
-\begin{tabular}{lll}
+\begin{center}
+\begin{tabular}{c l c}
 \hline
-\symbol & definition & unit
+符号 & 含义 & 单位 \\
 \hline
-n & 样本数量 & -
-x_i & 第i个样本特征向量 & -
-y_i & 第i个样本标签 & -
-theta & 模型参数 & -
-L & 损失函数 & -
+$f(t)$ & 时刻$t$的系统频率 & Hz \\
+$\Delta f$ & 频率偏差 & Hz \\
+$P_{ess}(t)$ & 储能系统输出功率 & MW \\
+$E_{ess}$ & 储能系统容量 & MWh \\
+$K, \tau$ & 频域模型参数 & - \\
+$C_{cycle}$ & 单次循环成本 & 元/次 \\
+$P_{FCAS}$ & 调频服务价格 & 元/MW\\
 \hline
 \end{tabular}
+\end{center}

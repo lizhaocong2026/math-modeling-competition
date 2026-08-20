@@ -1,23 +1,30 @@
-\newpage
-\section{假设与符号说明}
+\\newpage
+\\section{假设与符号说明}
 
-\subsection{假设}
-\begin{enumerate}
-\item 数据完整性假设：原始数据无系统性缺失，异常值可通过统计方法识别处理
-\item 独立性假设：各观测样本之间相互独立，不存在时间或空间自相关
-\item 稳定性假设：模型参数在考察期间保持稳定，环境因素变化可控
-\item 合理性假设：模型求解结果符合实际情况和物理约束
-\end{enumerate}
+\\subsection{基本假设}
+\\begin{enumerate}
+    \\item 园区能耗数据完整有效，缺失值不超过5\\%，可通过插值补全
+    \\item 分布式光伏出力预测误差服从正态分布，标准差为预测值的15\\%
+    \\item 储能系统充放电效率恒定（充电效率95\\%，放电效率90\\%），不计自放电
+    \\item 碳价在优化期内保持外生给定，不受本园区调度策略影响
+    \\item 负荷预测误差已知，用于构建不确定集
+\\end{enumerate}
 
-\subsection{符号说明}
-\begin{tabular}{lll}
-\hline
-\symbol & definition & unit
-\hline
-n & 样本数量 & -
-x_i & 第i个样本特征向量 & -
-y_i & 第i个样本标签 & -
-theta & 模型参数 & -
-L & 损失函数 & -
-\hline
-\end{tabular}
+\\subsection{符号说明}
+\\begin{center}
+\\begin{tabular}{c l c}
+\\hline
+符号 & 含义 & 单位 \\\\
+\\hline
+{\\text{load}}^t$ & 时刻 & kW \\\\
+{\\text{pv}}^t$ & 时刻 & kW \\\\
+{\\text{bat}}^t$ & 储能充放电功率（正充负放）& kW \\\\
+{\\text{elec}}^t$ & 时刻 & 元/kWh \\\\
+$\\pi_t$ & 时刻 & 元/tonCO$ \\\\
+{\\text{bat}}^t$ & 储能SOC & kWh \\\\
+$\\tilde{P}_{\\text{pv}}^t$ & 光伏出力不确定集 & kW \\\\
+, Z_2$ & 运行成本、碳排放目标 & 元, tonCO$ \\\\
+$\\Gamma$ & 鲁棒性预算参数 & - \\\\
+\\hline
+\\end{tabular}
+\\end{center}

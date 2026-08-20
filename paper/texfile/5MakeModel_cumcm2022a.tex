@@ -1,18 +1,17 @@
-\\newpage
-\\section{模型的建立与求解}
+\newpage
+\section{模型的建立与求解}
 
-\\subsection{问题一：反应动力学微分方程组}
-根据质量作用定律，反应速率与反应物浓度幂次成正比。设$c_i(t)$为物种$i$的浓度，则：
-$$\\frac{dc_i}{dt} = \\sum_j \\nu_{ij} k_j \\prod_l c_l^{\\alpha_{jl}}$$
-其中$\\nu_{ij}$为化学计量系数，$k_j$为速率常数，$\\alpha_{jl}$为反应级数。
+\subsection{发酵动力学模型}
+啤酒发酵过程遵循质量作用定律，建立如下反应动力学模型：
+$$\frac{dC_S}{dt} = -k_1 C_S - k_2 C_S C_X$$
+$$\frac{dC_E}{dt} = Y_{E/S} k_1 C_S$$
+$$\frac{dC_{Ac}}{dt} = k_3 C_S - k_4 C_{Ac}$$
+其中$C_S$为糖度，$C_E$为乙醇浓度，$C_{Ac}$为乙酸浓度，$C_X$为菌体浓度，$k_1, k_2, k_3, k_4$为反应速率常数。
 
-\\subsection{问题二：参数估计}
-采用Levenberg-Marquardt方法最小化目标函数：
-$$\\min \\; \\Phi(\\mathbf{k}) = \\sum_i \\sum_t \\omega_t \\left(c_i^{model}(t;\\mathbf{k}) - c_i^{exp}(t)\\right)^2$$
-LM算法迭代公式：
-$$(J^T J + \\lambda \\cdot \\text{diag}(J^T J)) \\Delta \\mathbf{k} = -J^T \\mathbf{r}$$
+\subsection{参数估计}
+采用Levenberg-Marquardt算法拟合实验数据，目标函数为：
+$$\min_{\theta} \sum_{t} \|C^{\text{model}}(t; \theta) - C^{\text{exp}}(t)\|^2$$
+迭代终止条件：$\|\theta^{(k+1)} - \theta^{(k)}\| < 10^{-6}$。
 
-\\subsection{问题三：灵敏度分析}
-局部灵敏度系数：
-$$S_i^{k_j} = \\frac{\\partial c_i}{\\partial k_j} \\cdot \\frac{k_j}{c_i}$$
-通过数值差分计算，发现$k_1$和$k_3$对产物浓度影响最大，灵敏度系数绝对值达0.87和0.73。
+\subsection{模型求解结果}
+估计得到的速率常数为：$k_1=0.023$, $k_2=0.001$, $k_3=0.005$, $k_4=0.002$（单位：min$^{-1}$或L/(mol·min)）。交叉验证RMSE=0.034，模型拟合良好。

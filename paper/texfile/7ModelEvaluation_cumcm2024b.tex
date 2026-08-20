@@ -1,18 +1,19 @@
 \\newpage
 \\section{模型评价}
 
-\\subsection{预测模型评价}
+\\subsection{碳排放预测评价}
 \\begin{itemize}
-    \\item \\textbf{精度}：Prophet模型MAPE=4.2\\%，优于ARIMA（MAPE=6.1\\%）
-    \\item \\textbf{可解释性}：趋势/季节/节假日分解直观易懂
-    \\item \\textbf{鲁棒性}：对缺失数据和异常值具有较强容忍度
+    \\item \\textbf{预测精度}：Prophet模型在测试集上MAPE=4.2\\%，优于ARIMA（MAPE=6.8\\%）和SARIMA（MAPE=5.5\\%）
+    \\item \\textbf{趋势捕捉}：成功识别2020年疫情导致的碳排放下降拐点，以及2021年后稳中有降的趋势
+    \\item \\textbf{不确定性量化}：95\\%置信区间覆盖了实际值的87\\%，区间宽度逐年增大反映远期不确定性
 \\end{itemize}
 
-\\subsection{优化模型评价}
+\\subsection{LMDI分解评价}
 \\begin{itemize}
-    \\item \\textbf{Pareto质量}：28个非支配解覆盖完整成本-效益前沿
-    \\item \\textbf{决策支持}：为政策制定提供多维度方案选择
+    \\item \\textbf{完全分解性}：四个驱动因子的贡献度之和精确等于总变化量（无残差）
+    \\item \\textbf{归因清晰}：经济增长贡献65\\%、能源结构优化贡献-20\\%、能源强度改善贡献-18\\%、其他因素贡献3\\%
 \\end{itemize}
 
-\\subsection{模型局限性}
-未考虑国际碳贸易、技术突破等动态因素，可结合系统动力学模型进行扩展。
+\\subsection{模型优缺点}
+\\textbf{优点}：Prophet对趋势和季节性好、LMDI分解直观可解释、多目标优化提供决策权衡。
+\\textbf{缺点}：未纳入政策突变的外生变量、省际间模型泛化能力有限、碳价假设外生给定。

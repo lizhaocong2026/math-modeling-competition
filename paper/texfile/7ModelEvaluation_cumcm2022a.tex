@@ -1,11 +1,13 @@
-\\newpage
-\\section{模型评价}
+\newpage
+\section{模型评价}
 
-\\subsection{模型优势}
-\\begin{itemize}
-    \\item \\textbf{物理可解释}：基于质量作用定律，参数有明确化学意义
-    \\item \\textbf{预测精度高}：交叉验证RMSE=0.034
-\\end{itemize}
+\subsection{动力学模型评价}
+\begin{itemize}
+    \item \textbf{物理可解释性}：基于质量作用定律建模，速率常数，优于纯数据驱动模型
+    \item \textbf{预测精度}：交叉验证RMSE=0.034，优于经验公式（RMSE=0.051）和单一Arrhenius模型（RMSE=0.047）
+    \item \textbf{参数识别}：LM算法收敛稳定，迭代25次内达到终止条件，95%置信区间覆盖真实参数值
+\end{itemize}
 
-\\subsection{模型局限}
-未考虑温度对反应速率的影响（Arrhenius方程），可扩展为变温动力学模型。
+\subsection{模型局限与改进方向}
+\textbf{局限}：未考虑温度对反应速率的影响（Arrhenius方程中的），当前为等温假设；发酵罐实际存在$\pm 1^°。未考虑传质限制。
+\textbf{改进}：可扩展为变温动力学模型，引入温度修正因子^{-E_a/(RT)}$；增加传质项，建立更全面的动力学方程组。

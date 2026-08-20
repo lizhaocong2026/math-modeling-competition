@@ -1,23 +1,29 @@
 \newpage
 \section{假设与符号说明}
 
-\subsection{假设}
+\subsection{基本假设}
 \begin{enumerate}
-\item 数据完整性假设：原始数据无系统性缺失，异常值可通过统计方法识别处理
-\item 独立性假设：各观测样本之间相互独立，不存在时间或空间自相关
-\item 稳定性假设：模型参数在考察期间保持稳定，环境因素变化可控
-\item 合理性假设：模型求解结果符合实际情况和物理约束
+    \item 输电线路拓扑结构已知且稳定，杆塔位置数据准确
+    \item 无人机电池容量固定，飞行速度和能耗率恒定
+    \item 拍摄角度和高度在安全范围内，不影响图像质量
+    \item 航线规划不考虑天气、空域管制等动态约束
 \end{enumerate}
 
 \subsection{符号说明}
-\begin{tabular}{lll}
+\begin{center}
+\begin{tabular}{c l c}
 \hline
-\symbol & definition & unit
+符号 & 含义 & 单位 \\
 \hline
-n & 样本数量 & -
-x_i & 第i个样本特征向量 & -
-y_i & 第i个样本标签 & -
-theta & 模型参数 & -
-L & 损失函数 & -
+$G=(V,E)$ & 输电线路图 & - \\
+$v_i$ & 第$i$个杆塔节点 & - \\
+$e_{ij}$ & 连接节点$i,j$的线路段 & m \\
+$B$ & 无人机电池容量 & Wh \\
+$v$ & 飞行速度 & m/s \\
+$P_{fly}$ & 飞行功耗 & W \\
+$h$ & 飞行高度 & m \\
+$\theta$ & 拍摄角度 & $^\circ$ \\
+$t_k$ & 在第$k$个节点的停留时间 & s \\
 \hline
 \end{tabular}
+\end{center}

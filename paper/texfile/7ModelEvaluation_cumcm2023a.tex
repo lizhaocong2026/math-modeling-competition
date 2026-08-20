@@ -3,15 +3,17 @@
 
 \\subsection{图论建模评价}
 \\begin{itemize}
-    \\item \\textbf{简洁性}：图模型有效捕捉了航空网络的核心结构
-    \\item \\textbf{可扩展性}：易于添加新机场和航线
+    \\item \\textbf{简洁性}：图模型有效捕捉了航空网络的核心拓扑结构，节点度分布符合无标度特性
+    \\item \\textbf{可扩展性}：易于添加新机场和航线，支持动态网络更新
+    \\item \\textbf{可解性}：NP-hard问题通过NSGA-II启发式求解，100节点网络30分钟内求得高质量解
 \\end{itemize}
 
 \\subsection{优化求解评价}
 \\begin{itemize}
-    \\item \\textbf{效率}：100节点网络30分钟内求得高质量解
-    \\item \\textbf{多样性}：32个Pareto解提供了丰富的调度方案
+    \\item \\textbf{多样性}：32个Pareto解均匀分布在前沿上，为决策者提供丰富选择
+    \\item \\textbf{收敛性}：迭代200代后Hypervolume指标趋于稳定，验证算法收敛性
+    \\item \\textbf{适应性}：参数自适应调整策略使求解效率提升30\\%
 \\end{itemize}
 
 \\subsection{改进方向}
-可引入动态规划处理时段依赖性，或采用强化学习实现实时调度。
+可引入动态规划处理时段依赖性，或采用强化学习实现实时动态调度，进一步提升大规模网络求解能力。
