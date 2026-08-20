@@ -117,7 +117,8 @@ class PPOAgent:
             traj_s, traj_a, traj_r = [], [], []
             done = False
             eps = max(0.05, 0.3 * (1 - ep / (episodes + 1)))
-            while not done:
+            max_steps = 200
+            for step_i in range(max_steps):
                 action = self.choose_action(state, epsilon=eps)
                 next_state, reward, done, info = env.step(action)
                 traj_s.append(state)
@@ -125,7 +126,10 @@ class PPOAgent:
                 traj_r.append(reward)
                 state = next_state
                 total_reward += reward
-                if done or len(traj_s) >= batch_size:
+                if done:
+                    break
+                if len(traj_s) >= batch_size:
+                    if done: break
                     if len(traj_s) >= 8:
                         rewards = np.array(traj_r)
                         advantages = np.zeros(len(rewards))
