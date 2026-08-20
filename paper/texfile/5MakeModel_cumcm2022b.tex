@@ -1,30 +1,24 @@
 \newpage
 \section{模型的建立与求解}
 
-\subsection{数据预处理}
-\begin{enumerate}[label=(\arabic*), itemindent=0pt, labelindent=\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
-\item[1] 用户充电行为数据清洗与特征提取
-\item[2] 地理信息数据处理与路网构建
-\item[3] 多源数据时空对齐与融合
-\end{enumerate}
+\subsection{问题一：状态评估指标体系}
+采用熵权法确定各参数权重。首先对油色谱数据进行标准化：
+$$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
+信息熵：$e_j = -\frac{1}{\ln n}\sum_i p_{ij} \ln p_{ij}$，其中$p_{ij} = \frac{|z_{ij}|}{\sum_i |z_{ij}|}$。
+权重：$w_j = \frac{1-e_j}{\sum_k(1-e_k)}$。最终权重：DGA组分为0.52，负载率为0.23。
 
-\subsection{问题一模型：需求强度指数}
-综合人口密度、路网密度、现有设施等因素构建需求强度指数：
-\I_i = w_1 \cdot \frac{Pop_i}{\max(Pop)} + w_2 \cdot \frac{Road_i}{\max(Road)} + w_3 \cdot \left(1 - \frac{Station_i}{\max(Station)}\right)
-权重采用熵权法客观确定。
-
-\subsection{问题二模型：选址-定容优化}
-\subsubsection{目标函数}
+\subsection{问题二：多源融合故障诊断}
+构建多通道CNN-LSTM融合网络：
 \begin{align}
-\min \quad Z_1 &= \sum_j C_j x_j \quad \text{(投资成本)} 
-\max \quad Z_2 &= \sum_i D_i \cdot \mathbb{1}\left[\min_j d_{ij} x_j \leq r\right] \quad \text{(覆盖率)} 
+\mathbf{F}^{(k)} &= \text{CNN-Encoder}(X^{(k)}) \\
+\alpha_k &= \text{Softmax}\left(\mathbf{W}_\alpha \cdot \mathbf{F}^{(k)}\right)\\
+\mathbf{F}_{\text{fused}} &= \sum_k \alpha_k \mathbf{F}^{(k)} \\
+\hat{y} &= \text{LSTM}(\mathbf{F}_{\text{fused}})
 \end{align}
-\subsubsection{约束条件}
-\begin{align}
-d_{ij} &= \sqrt{(x_i - x_j)^2 + (y_i - y_j)^2} 
-\sum_j x_j &\leq N_{\max} 
-x_j &\in \{0,1\}, \quad \forall j 
-\end{align}
+引入物理约束层，将DRTA三比值法作为知识蒸馏损失项。
 
-\subsection{NSGA-II求解}
-种群大小N=80，最大迭代G_max=150，交叉概率p_c=0.9，变异概率p_m=0.1。求解得到28个非支配解，覆盖完整的Pareto前沿。
+\subsection{问题三：RUL预测与维护优化}
+退化轨迹采用改进Wiener过程建模：
+$$X(t) = X(0) + \mu t + \sigma B(t)$$
+RUL定义为首次穿越故障阈值的时间：$RUL = \inf\{t: X(t) >= X_\text{threshold}}$。
+维护优化建模为马尔可夫决策过程(MDP)，采用Q-learning求解最优检修策略。

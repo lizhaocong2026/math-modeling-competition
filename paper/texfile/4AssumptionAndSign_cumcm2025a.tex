@@ -1,34 +1,37 @@
-\newpage
-\section{假设与符号说明}
+\\newpage
+\\section{假设与符号说明}
 
-\subsection{基本假设}
-\begin{enumerate}
-    \item 负荷数据完整有效，缺失值可通过线性插值补全，异常值符合3\sigma准则
-    \item 新能源发电数据（风电、光伏）可准确预测，预测误差服从正态分布
-    \item 储能系统充放电效率恒定，不计自放电损耗
-    \item 燃气机组和燃煤机组的出力调整速率在约束范围内线性变化
-    \item 用户侧负荷响应具有弹性，价格信号可引导部分负荷转移
-\end{enumerate}
+\\subsection{基本假设}
+为保证模型的科学性和可解性，作出如下合理假设：
+\\begin{enumerate}
+    \\item[(A1)] \\textbf{数据质量假设}：原始数据真实有效，不存在系统性偏差和异常值，测量误差服从正态分布$\\mathcal{N}(0, \\sigma^2)$，且各观测相互独立。
+    \\item[(A2)] \\textbf{参数稳定性假设}：模型参数在考察期内保持相对稳定，不发生突变，可通过历史数据拟合估计，参数置信区间覆盖真实值。
+    \\item[(A3)] \\textbf{变量独立性假设}：各决策变量相互独立，不考虑强耦合效应，简化模型复杂度并提高可解性，必要时可引入惩罚项处理耦合。
+    \\item[(A4)] \\textbf{凸性假设}：优化目标函数为凸函数或可通过合理近似转化为凸优化问题，保证全局最优解存在且唯一，避免陷入局部最优。
+    \\item[(A5)] \\textbf{约束相容性假设}：约束条件在可行域内一致成立，不存在冲突，可行域非空且连通，保证优化问题有解。
+    \\item[(A6)] \\textbf{环境稳定假设}：外部环境因素（如政策变化、市场波动、天气变化等）在考察期内保持相对稳定，不影响模型有效性。
+    \\item[(A7)] \\textbf{数值精度假设}：模型求解过程中数值计算的截断误差和舍入误差在可接受范围内，不影响最终结果的精度。
+\\end{enumerate}
 
-\subsection{符号说明}
-\begin{center}
-\begin{tabular}{c l c}
-\hline
-符号 & 含义 & 单位 \\
-\hline
-$F_t$ & 时刻$t$的总负荷 & MW \\
-$T_t, S_t, R_t$ & STL分解的趋势项、季节项、残差项 & MW \\
-$Q, K, V$ & Self-Attention的查询、键、值矩阵 & - \\
-$d_k$ & 键向量维度 & - \\
-$h_t$ & 时刻$t$的状态向量 & - \\
-$P_{\text{load}}^t$ & 时刻$t$的负荷功率 & MW \\
-$P_{\text{wind}}^t, P_{\text{solar}}^t$ & 风电/光伏出力 & MW \\
-$E_{\text{bat}}^t$ & 储能SOC & MWh \\
-$u_{\text{gas}}^t, u_{\text{coal}}^t, u_{\text{bat}}^t$ & 各机组出力调整量 & MW \\
-$C_{\text{cost}}(t)$ & 时刻$t$的调度成本 & 元 \\
-$\alpha, \beta, \gamma$ & 奖励函数权重系数 & - \\
-$Z_1, Z_2, Z_3$ & 多目标的成本、消纳率、满意度 & - \\
-$N, G_{\max}$ & NSGA-II种群大小、最大迭代代数 & - \\
-\hline
-\end{tabular}
-\end{center}
+\\subsection{符号说明}
+\\begin{center}
+\\begin{tabular}{c l c}
+\\hline
+\\hline
+符号 & 含义 & 单位 \\\\
+\\hline
+$\\xi$ & 随机扰动项 & - \\\\
+$\\zeta$ & 松弛变量 & - \\\\
+$\\lambda$ & Lagrange乘子 & - \\\\
+$\\mu$ & 正则化参数 & - \\\\
+$\\nabla f$ & 梯度向量 & - \\\\
+$\\mathcal{L}$ & 拉格朗日函数 & - \\\\
+$\\|\\cdot\\|_2$ & L2范数 & - \\\\
+$\\otimes$ & Kronecker积 & - \\\\
+$\\mathbb{E}[\\cdot]$ & 期望算子 & - \\\\
+$\\text{Var}(\\cdot)$ & 方差算子 & - \\\\
+$\\Phi(\\cdot)$ & 标准正态分布函数 & - \\\\
+$\\Gamma(\\cdot)$ & Gamma函数 & - \\\\
+\\hline
+\\end{tabular}
+\\end{center}

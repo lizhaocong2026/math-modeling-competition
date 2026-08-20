@@ -1,15 +1,22 @@
 \\maketitle
 \\begin{abstract}
-    本文针对2025年CUMCM B题交通网络短时流量预测问题，建立了基于GraphSAGE的图神经网络预测模型。首先构建城市道路网络的图结构表示，节点为路口，边为道路段；其次设计GraphSAGE聚合器，学习节点和边的时空特征表示；最后训练预测模型，实现未来15分钟的交通流量预测。
+    本文针对\\textbf{[问题主题]}问题，建立了\\textbf{[模型类型]}模型。首先对原始数据进行\\textbf{[预处理方法]}预处理；其次构建了基于\\textbf{[核心算法]}的\\textbf{[模型名称]}模型；最后通过\\textbf{[验证方法]}验证模型的有效性。
     
-    \\textbf{针对问题一}，我们构建了城市交通网络的图表示。采用邻接矩阵$A$表示路网拓扑结构，节点特征矩阵$X$包含历史流量、天气、时间等信息。
+    \\textbf{针对问题一}，我们建立了\\textbf{[模型1名称]}。设观测序列为$\\{y_t\\}_{t=1}^T$，将其分解为趋势项$、季节项$：
+    y_t = T_t + S_t + R_t, \\quad \\sum_{t=1}^\\tau S_t = 0
+    其中$\\tau。采用STL（Seasonal-Trend decomposition using Loess）方法进行稳健分解，目标函数为：
+    \\min_{T, S, R} \\sum_{t=1}^T \\rho(w_t \\cdot (y_t - T_t - S_{t\\mod\\tau} - R_t))
+    其中$\\rho(\\cdot)，。实验结果表明，该模型在\\textbf{[指标]}上达到\\textbf{[数值]}，优于传统方法。
     
-    \\textbf{针对问题二}，我们设计了GraphSAGE预测模型。通过邻居节点特征聚合，学习每个节点的低维嵌入表示：
-    $$h_v^{(l+1)} = \\sigma(W^{(l)} \\cdot CONCAT(h_v^{(l)}, AVG(\\{h_u^{(l)}\\}_{u \\in N(v)})))$$
+    \\textbf{针对问题二}，我们提出了\\textbf{[模型2名称]}。假设决策变量为 \\in \\mathcal{X}$，目标函数为(x)$，约束条件为(x) \\leq 0, \\; h_k(x) = 0$。通过\\textbf{[具体方法}]优化求解：
+    x^* = \\arg\\min_{x \\in \\mathcal{X}} f(x) \\quad \\text{s.t.} \\quad g_j(x) \\leq 0, \\; h_k(x) = 0
+    通过对比实验，模型的\\textbf{[性能指标]}提升了\\textbf{[百分比]}\\%。
     
-    \\textbf{针对问题三}，我们评估了模型性能。在真实路网数据上测试，模型MAE=0.045，RMSE=0.062，优于传统时空预测模型。
+    \\textbf{针对问题三}，我们建立了\\textbf{[模型3名称]}。设$\\{f_i(x)\\}_{i=1}^p$，多目标优化问题可表述为：
+    \\min_{x} \\; \\mathbf{f}(x) = (f_1(x), f_2(x), \\ldots, f_p(x))^T
+    采用NSGA-II算法求解Pareto前沿，定义支配关系：$\\forall i, f_i(x) \\leq f_i(y)$\\exists i, f_i(x) < f_i(y)$。敏感性分析表明，模型对参数变化具有良好的鲁棒性。
     
-    本研究为城市交通管理提供了准确可靠的预测工具。
+    本文提出的\\textbf{[方法论名称]}框架，在\\textbf{[应用领域]}方面具有较好的应用价值。未来工作可考虑引入\\textbf{[改进方向]}。
     
-    \\keywords{图神经网络\quad GraphSAGE\quad 交通预测\quad 时空建模\quad 智能交通}
+    \\keywords{关键词1\quad 关键词2\quad 关键词3\quad 关键词4}
 \\end{abstract}

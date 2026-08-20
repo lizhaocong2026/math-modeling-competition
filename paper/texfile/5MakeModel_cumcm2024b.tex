@@ -1,32 +1,24 @@
-\\newpage
-\\section{模型的建立与求解}
+\newpage
+\section{模型的建立与求解}
 
-\\subsection{问题一模型：Prophet碳排放预测}
-\\subsubsection{模型框架}
-Prophet模型将时间序列分解为趋势、季节和节假日效应：
-$$g(t) = m(t) + s(t) + h(t) + \\epsilon_t$$
-其中：
-\\begin{itemize}
-    \\item $m(t)$：分段线性/逻辑增长趋势
-    \\item $s(t)$：年度周期项（傅里叶级数）
-    \\item $h(t)$：节假日效应
-\\end{itemize}
+\subsection{问题一：状态评估指标体系}
+采用熵权法确定各参数权重。首先对油色谱数据进行标准化：
+$$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
+信息熵：$e_j = -\frac{1}{\ln n}\sum_i p_{ij} \ln p_{ij}$，其中$p_{ij} = \frac{|z_{ij}|}{\sum_i |z_{ij}|}$。
+权重：$w_j = \frac{1-e_j}{\sum_k(1-e_k)}$。最终权重：DGA组分为0.52，负载率为0.23。
 
-\\subsubsection{结果}
-模型MAPE=4.2\\%，预测2030年碳排放约105亿吨，较2020年增长12\\%。
+\subsection{问题二：多源融合故障诊断}
+构建多通道CNN-LSTM融合网络：
+\begin{align}
+\mathbf{F}^{(k)} &= \text{CNN-Encoder}(X^{(k)}) \\
+\alpha_k &= \text{Softmax}\left(\mathbf{W}_\alpha \cdot \mathbf{F}^{(k)}\right)\\
+\mathbf{F}_{\text{fused}} &= \sum_k \alpha_k \mathbf{F}^{(k)} \\
+\hat{y} &= \text{LSTM}(\mathbf{F}_{\text{fused}})
+\end{align}
+引入物理约束层，将DRTA三比值法作为知识蒸馏损失项。
 
-\\subsection{问题二模型：LMDI驱动因素分解}
-采用对数平均Divisia指数（LMDI）方法：
-$$\\Delta C = C^t - C^0 = \\Delta C_{\\text{eco}} + \\Delta C_{\\text{str}} + \\Delta C_{\\text{int}} + \\Delta C_{\\text{eng}}$$
-分解结果：经济规模效应贡献58\\%，产业结构效应23\\%，能源强度效应12\\%，能源结构效应7\\%。
-
-\\subsection{问题三模型：多目标减排优化}
-\\subsubsection{目标函数}
-\\begin{align}
-\\min \\quad Z_1 &= \\sum_t \\left[ c_{\\text{coal}}(1-x_t) + c_{\\text{renew}} x_t \\right] \\\\
-\\max \\quad Z_2 &= \\sum_t GDP_t(1 - \\delta \\cdot x_t)
-\\end{align}
-其中$x_t$为可再生能源占比，$\\delta$为转型成本系数。
-
-\\subsubsection{NSGA-II求解}
-种群100，迭代200代，得到28个Pareto最优解。最优方案：2030年可再生能源占比达35\\%，减排成本降低22\\%。
+\subsection{问题三：RUL预测与维护优化}
+退化轨迹采用改进Wiener过程建模：
+$$X(t) = X(0) + \mu t + \sigma B(t)$$
+RUL定义为首次穿越故障阈值的时间：$RUL = \inf\{t: X(t) >= X_\text{threshold}}$。
+维护优化建模为马尔可夫决策过程(MDP)，采用Q-learning求解最优检修策略。

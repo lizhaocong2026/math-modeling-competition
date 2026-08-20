@@ -1,37 +1,27 @@
 \\newpage
-\\section{误差分析与模型检验}
+\\section{误差分析}
 
-\\subsection{预测误差分析}
-\\subsubsection{误差指标定义}
-采用以下指标评估模型预测精度：
-\\begin{itemize}
-    \\item 平均绝对误差：$MAE = \\frac{1}{N}\\sum_{i=1}^{N}|y_i - \\hat{y}_i|$
-    \\item 均方根误差：$RMSE = \\sqrt{\\frac{1}{N}\\sum_{i=1}^{N}(y_i - \\hat{y}_i)^2}$
-    \\item 平均绝对百分比误差：$MAPE = \\frac{1}{N}\\sum_{i=1}^{N}|\\frac{y_i - \\hat{y}_i}{y_i}| \\times 100\\%$
-\\end{itemize}
+\\subsection{模型拟合误差}
+模型的拟合误差主要来源于数据噪声和模型结构限制。对于时间序列预测模型，预测误差随预测步长增加而增大，这是由信息衰减造成的。通过交叉验证估计测试集误差：
+\\begin{align}
+    MAE &= \\frac{1}{N}\\sum_{i=1}^{N}|y_i - \\hat{y}_i| \\\\
+    RMSE &= \\sqrt{\\frac{1}{N}\\sum_{i=1}^{N}(y_i - \\hat{y}_i)^2} \\\\
+    MAPE &= \\frac{1}{N}\\sum_{i=1}^{N}\\left|\\frac{y_i - \\hat{y}_i}{y_i}\\right| \\times 100\\%
+\\end{align}
+其中，$\hat{y}_i。交叉验证采用滑动窗口方式，训练集与测试集比例为4:1。
 
-\\subsubsection{误差来源分析}
+\\subsection{灵敏度分析}
+对关键参数进行灵敏度分析，考察参数变化对模型输出的影响。定义灵敏度系数：
+S_{x_i}^{y} = \\frac{x_i}{y}\\cdot\\frac{\\partial y}{\\partial x_i}
+当$|S|<1，模型输出对参数变化不敏感；当<|S|<3；当$|S|>3，需要重点校准该参数。
+
+\\subsection{误差来源分析}
 \\begin{enumerate}
-    \\item \\textbf{数据噪声}：传感器测量误差、数据传输丢失
-    \\item \\textbf{模型简化}：忽略部分影响因素（如特殊事件）
-    \\item \\textbf{参数估计}：超参数选择的主观性
+    \\item[(1)] \\textbf{数据误差}：测量误差、缺失值插值引入的偏差，以及采样频率不足导致的信息丢失
+    \\item[(2)] \\textbf{模型误差}：模型结构不能完美刻画真实系统的复杂性，存在结构性偏差
+    \\item[(3)] \\textbf{数值误差}：迭代求解的截断误差和舍入误差，在长时间积分中可能累积
 \\end{enumerate}
 
-\\subsection{敏感性分析}
-对关键参数进行扰动分析，验证模型稳定性：
-\\begin{table}[H]
-    \\centering
-    \\caption{参数敏感性分析}
-    \\begin{tabular}{cccc}
-        \\toprule
-        参数 & 基准值 & 变化±10\\% & MAE变化 \\
-        \\midrule
-        学习率 & 0.001 & 0.0009/0.0011 & ±0.002 \\
-        序列长度 & 48 & 43/53 & ±0.003 \\
-        隐藏层维度 & 64 & 58/70 & ±0.001 \\
-        \\bottomrule
-    \\end{tabular}
-\\end{table}
-
-\\subsection{模型检验}
-采用交叉验证方法，将数据按8:2划分为训练集和测试集，5折交叉验证结果显示模型具有良好的泛化能力。
+\\subsection{交叉验证}
+采用K折交叉验证评估模型泛化能力。将数据划分为K个互不相交的子集，每次取一个子集作为测试集，其余作为训练集，重复K次后取平均误差：
+CV = \\frac{1}{K}\\sum_{k=1}^{K} MSE_k, \\quad MSE_k = \\frac{1}{n_k}\\sum_{i \\in Test_k}(y_i - \\hat{y}_i)^2

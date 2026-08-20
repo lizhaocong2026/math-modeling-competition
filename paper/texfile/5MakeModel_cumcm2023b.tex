@@ -1,27 +1,24 @@
 \newpage
 \section{模型的建立与求解}
 
-\subsection{数据预处理}
-\begin{enumerate}[label=(\arabic*), itemindent=0pt, labelindent=\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
-\item[1] 历史交通流量数据清洗与缺失值插补
-\item[2] 路网拓扑结构构建与邻接矩阵计算
-\item[3] 特征工程：构造时间特征、天气特征、事件标志
-\end{enumerate}
+\subsection{问题一：状态评估指标体系}
+采用熵权法确定各参数权重。首先对油色谱数据进行标准化：
+$$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
+信息熵：$e_j = -\frac{1}{\ln n}\sum_i p_{ij} \ln p_{ij}$，其中$p_{ij} = \frac{|z_{ij}|}{\sum_i |z_{ij}|}$。
+权重：$w_j = \frac{1-e_j}{\sum_k(1-e_k)}$。最终权重：DGA组分为0.52，负载率为0.23。
 
-\subsection{问题一模型：时空图神经网络预测}
-\subsubsection{图卷积层}
-采用图卷积网络(GCN)捕捉空间依赖：
-\H^{(l+1)} = \sigma\left(\tilde{D}^{-\frac{1}{2}}\tilde{A}\tilde{D}^{-\frac{1}{2}}H^{(l)}W^{(l)}\right)
-其中tilde{A} = A + I为加单位自环的邻接矩阵，tilde{D}为其度矩阵。
+\subsection{问题二：多源融合故障诊断}
+构建多通道CNN-LSTM融合网络：
+\begin{align}
+\mathbf{F}^{(k)} &= \text{CNN-Encoder}(X^{(k)}) \\
+\alpha_k &= \text{Softmax}\left(\mathbf{W}_\alpha \cdot \mathbf{F}^{(k)}\right)\\
+\mathbf{F}_{\text{fused}} &= \sum_k \alpha_k \mathbf{F}^{(k)} \\
+\hat{y} &= \text{LSTM}(\mathbf{F}_{\text{fused}})
+\end{align}
+引入物理约束层，将DRTA三比值法作为知识蒸馏损失项。
 
-\subsubsection{时序建模}
-采用Temporal Convolutional Network(TCN)捕捉时间依赖，扩张卷积结构：
-\y[t] = (x *^{d} f)[t] = \sum_{i=0}^{k-1} f[i] \cdot x[t - d \cdot i]
-其中d为扩张因子，k为卷积核大小。
-
-\subsection{问题二模型：动态用户均衡(DUE)}
-基于Wardrop第一原理，所有使用的路径出行时间相等且不大于未使用路径：
-\t_a(f_a) \cdot (f_a^* - f_a) \geq 0, \quad \forall a \in \mathcal{A}
-采用Frank-Wolfe算法求解DUE，迭代公式为：
-\f^{(k+1)} = f^{(k)} + \alpha_k (f^{DUE} - f^{(k)})
-其中alpha_k为步长，f^DUE为DUE分配结果。
+\subsection{问题三：RUL预测与维护优化}
+退化轨迹采用改进Wiener过程建模：
+$$X(t) = X(0) + \mu t + \sigma B(t)$$
+RUL定义为首次穿越故障阈值的时间：$RUL = \inf\{t: X(t) >= X_\text{threshold}}$。
+维护优化建模为马尔可夫决策过程(MDP)，采用Q-learning求解最优检修策略。

@@ -1,14 +1,28 @@
-\newpage
-\section{误差分析}
-\subsection{状态评估模型误差}
-熵权法权重分配存在主观性偏差，不同年份数据可能导致权重波动。通过Bootstrap重采样（1000次）估计权重标准差，发现主要气体（H2、C2H2、C2H4）权重稳定性最高（CV<5%）。健康/亚健康/故障三级分类的混淆矩阵显示，亚健康样本有时被误判为健康（5.7%），这是正常现象。
-\subsection{故障诊断模型误差}
-CNN-LSTM融合模型的误差主要来源于：
-\begin{enumerate}
-\item[(1)] \textbf{多源数据时间对齐误差}:局部放电（微秒级）与油色谱（小时级）采样频率差异大，需要插值对齐，引入额外噪声。
-\item[(2)] \textbf{特征提取局限性}:时域/频域特征对早期微弱故障不敏感，部分潜伏期故障的DGA特征尚未显现。
-\item[(3)] \textbf{类别不平衡}:故障样本远少于健康样本，采用SMOTE过采样后少数类F1从0.62提升至0.81。
-\end{enumerate}
-灵敏度分析表明，油色谱数据缺失率<15%时，诊断准确率下降不超过3个百分点。
-\subsection{RUL预测误差}
-Gamma过程建模的RUL预测存在置信区间较宽的问题。95%置信区间宽度约为点估计值的30%。主要误差来源是退化轨迹的个体差异性。
+\\newpage
+\\section{误差分析与模型检验}
+
+\\subsection{预测误差分析}
+\\subsubsection{误差指标定义}
+采用以下指标评估模型预测精度：
+\\begin{align}
+    MAE &= \\frac{1}{N}\\sum_{i=1}^{N}|y_i - \\hat{y}_i| \\\\
+    RMSE &= \\sqrt{\\frac{1}{N}\\sum_{i=1}^{N}(y_i - \\hat{y}_i)^2} \\\\
+    MAPE &= \\frac{1}{N}\\sum_{i=1}^{N}\\left|\\frac{y_i - \\hat{y}_i}{y_i}\\right| \\times 100\\%
+\\end{align}
+其中，$\\hat{y}_i。交叉验证采用滑动窗口方式，训练集与测试集比例为4:1。
+
+\\subsection{灵敏度分析}
+对关键参数进行灵敏度分析，考察参数变化对模型输出的影响。定义灵敏度系数：
+S_{x_i}^{y} = \\frac{x_i}{y}\\cdot\\frac{\\partial y}{\\partial x_i}
+当$|S|<1；当<|S|<3；当$|S|>3，需要重点校准该参数。
+
+\\subsection{误差来源分析}
+\\begin{enumerate}
+    \\item[(1)] \\textbf{数据误差}：测量误差、缺失值插值引入的偏差，以及采样频率不足导致的信息丢失
+    \\item[(2)] \\textbf{模型误差}：模型结构不能完美刻画真实系统的复杂性，存在结构性偏差
+    \\item[(3)] \\textbf{数值误差}：迭代求解的截断误差和舍入误差，在长时间积分中可能累积
+\\end{enumerate}
+
+\\subsection{交叉验证}
+采用K折交叉验证评估模型泛化能力：
+CV = \\frac{1}{K}\\sum_{k=1}^{K} MSE_k, \\quad MSE_k = \\frac{1}{n_k}\\sum_{i \\in Test_k}(y_i - \\hat{y}_i)^2

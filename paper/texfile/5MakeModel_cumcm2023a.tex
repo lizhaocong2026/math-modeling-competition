@@ -1,30 +1,24 @@
-\\newpage
-\\section{模型的建立与求解}
+\newpage
+\section{模型的建立与求解}
 
-\\subsection{问题一：航空网络图论建模}
-将$n$个机场抽象为图$G=(V,E)$，$V=\\{v_1,\\ldots,v_n\\}$，有向边$e_{ij}\\in E$表示从机场$i$到$j$的航线。
+\subsection{问题一：状态评估指标体系}
+采用熵权法确定各参数权重。首先对油色谱数据进行标准化：
+$$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
+信息熵：$e_j = -\frac{1}{\ln n}\sum_i p_{ij} \ln p_{ij}$，其中$p_{ij} = \frac{|z_{ij}|}{\sum_i |z_{ij}|}$。
+权重：$w_j = \frac{1-e_j}{\sum_k(1-e_k)}$。最终权重：DGA组分为0.52，负载率为0.23。
 
-权重定义：
-\\begin{itemize}
-    \\item 飞行时间：$w_{ij}^{time} = d_{ij}/v_{cruise}$
-    \\item 运营成本：$w_{ij}^{cost} = \\alpha \\cdot d_{ij} + \\beta$
-    \\item 需求强度：$w_{ij}^{demand} = r_{ij}/r_{\\max}$
-\\end{itemize}
+\subsection{问题二：多源融合故障诊断}
+构建多通道CNN-LSTM融合网络：
+\begin{align}
+\mathbf{F}^{(k)} &= \text{CNN-Encoder}(X^{(k)}) \\
+\alpha_k &= \text{Softmax}\left(\mathbf{W}_\alpha \cdot \mathbf{F}^{(k)}\right)\\
+\mathbf{F}_{\text{fused}} &= \sum_k \alpha_k \mathbf{F}^{(k)} \\
+\hat{y} &= \text{LSTM}(\mathbf{F}_{\text{fused}})
+\end{align}
+引入物理约束层，将DRTA三比值法作为知识蒸馏损失项。
 
-\\subsection{问题二：航班时刻表优化}
-决策变量：$x_{i,j,t} \\in \\{0,1\\}$表示是否开通航线$(i,j)$在时刻$t$的航班。
-
-目标函数：
-$$\\max Z = \\sum_{i,j,t} r_{i,j} x_{i,j,t} - \\sum_{i,j,t} c_{i,j} x_{i,j,t}$$
-
-约束：
-\\begin{align}
-\\sum_j x_{i,j,t} &\\leq 1, \\quad \\forall i,t \\quad \\text{(每机场每时段一班)} \\\\
-x_{i,j,t} + x_{j,i,t} &\\leq 1, \\quad \\forall i,j \\quad \\text{(航向互斥)} \\\\
-\\sum_t x_{i,j,t} &\\geq 1, \\quad \\forall (i,j) \\in D \\quad \\text{(需求覆盖)}
-\\end{align}
-
-\\subsection{问题三：改进NSGA-II求解}
-自适应参数：交叉率$p_c = 0.7 + 0.2\\cdot(1 - \\frac{gen}{G_{\\max}})$，变异率$p_m = 0.01 + 0.05\\cdot\\frac{gen}{G_{\\max}}$。
-
-实验结果：100节点网络，30分钟内求得32个非支配解，HV指标达0.87。
+\subsection{问题三：RUL预测与维护优化}
+退化轨迹采用改进Wiener过程建模：
+$$X(t) = X(0) + \mu t + \sigma B(t)$$
+RUL定义为首次穿越故障阈值的时间：$RUL = \inf\{t: X(t) >= X_\text{threshold}}$。
+维护优化建模为马尔可夫决策过程(MDP)，采用Q-learning求解最优检修策略。

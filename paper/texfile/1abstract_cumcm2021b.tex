@@ -1,16 +1,22 @@
 \\maketitle
 \\begin{abstract}
-    本文针对2021年CUMCM B题交通流短时预测问题，建立了基于Transformer的序列预测模型。首先分析交通流的时间序列特征；其次构建Transformer预测模型，利用Self-Attention机制捕捉长期依赖；最后与ARIMA等传统方法进行对比实验。
+    本文针对\\textbf{[问题主题]}问题，建立了\\textbf{[模型类型]}模型。首先对原始数据进行\\textbf{[预处理方法]}预处理；其次构建了基于\\textbf{[核心算法]}的\\textbf{[模型名称]}模型；最后通过\\textbf{[验证方法]}验证模型的有效性。
     
-    \\textbf{针对问题一}，我们分析了交通流数据的时间序列特征。交通流具有明显的日周期性和周周期性，同时存在早晚高峰的脉冲特征。通过STL分解提取趋势项、季节项和残差项。
+    \\textbf{针对问题一}，我们建立了\\textbf{[模型1名称]}。设观测序列为$\\{y_t\\}_{t=1}^T$，将其分解为趋势项$、季节项$：
+    y_t = T_t + S_t + R_t, \\quad \\sum_{t=1}^\\tau S_t = 0
+    其中$\\tau。采用STL（Seasonal-Trend decomposition using Loess）方法进行稳健分解，目标函数为：
+    \\min_{T, S, R} \\sum_{t=1}^T \\rho(w_t \\cdot (y_t - T_t - S_{t\\mod\\tau} - R_t))
+    其中$\\rho(\\cdot)，。实验结果表明，该模型在\\textbf{[指标]}上达到\\textbf{[数值]}，优于传统方法。
     
-    \\textbf{针对问题二}，我们建立了Transformer短时预测模型。基于Self-Attention机制，模型能够捕捉长时间序列中的依赖关系：
-    \\text{Attention}(Q, K, V) = \\text{softmax}\\!\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V
-    实验表明，Transformer模型在短时预测任务上表现良好。
+    \\textbf{针对问题二}，我们提出了\\textbf{[模型2名称]}。假设决策变量为 \\in \\mathcal{X}$，目标函数为(x)$，约束条件为(x) \\leq 0, \\; h_k(x) = 0$。通过\\textbf{[具体方法}]优化求解：
+    x^* = \\arg\\min_{x \\in \\mathcal{X}} f(x) \\quad \\text{s.t.} \\quad g_j(x) \\leq 0, \\; h_k(x) = 0
+    通过对比实验，模型的\\textbf{[性能指标]}提升了\\textbf{[百分比]}\\%。
     
-    \\textbf{针对问题三}，我们与ARIMA、LSTM等传统方法进行了对比实验。结果显示，Transformer模型在MAPE指标上优于ARIMA约15\\%，与LSTM相当但训练速度更快。
+    \\textbf{针对问题三}，我们建立了\\textbf{[模型3名称]}。设$\\{f_i(x)\\}_{i=1}^p$，多目标优化问题可表述为：
+    \\min_{x} \\; \\mathbf{f}(x) = (f_1(x), f_2(x), \\ldots, f_p(x))^T
+    采用NSGA-II算法求解Pareto前沿，定义支配关系：$\\forall i, f_i(x) \\leq f_i(y)$\\exists i, f_i(x) < f_i(y)$。敏感性分析表明，模型对参数变化具有良好的鲁棒性。
     
-    本研究为交通流短时预测提供了有效的深度学习方法。
+    本文提出的\\textbf{[方法论名称]}框架，在\\textbf{[应用领域]}方面具有较好的应用价值。未来工作可考虑引入\\textbf{[改进方向]}。
     
-    \\keywords{交通流预测\quad Transformer\quad 时间序列\quad 深度学习\quad 短时预测}
+    \\keywords{关键词1\quad 关键词2\quad 关键词3\quad 关键词4}
 \\end{abstract}

@@ -1,29 +1,24 @@
 \newpage
 \section{模型的建立与求解}
 
-\subsection{数据预处理}
-\begin{enumerate}[label=(\arabic*), itemindent=0pt, labelindent=\parindent, labelwidth=2em, labelsep=5pt, leftmargin=*]
-\item[1] 缺失值检测与线性插值补全
-\item[2] 异常值检测（3\sigma准则）与Winsorize处理
-\item[3] Min-Max标准化：x* = (x - x_min)/(x_max - x_min)
-\end{enumerate}
+\subsection{问题一：状态评估指标体系}
+采用熵权法确定各参数权重。首先对油色谱数据进行标准化：
+$$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
+信息熵：$e_j = -\frac{1}{\ln n}\sum_i p_{ij} \ln p_{ij}$，其中$p_{ij} = \frac{|z_{ij}|}{\sum_i |z_{ij}|}$。
+权重：$w_j = \frac{1-e_j}{\sum_k(1-e_k)}$。最终权重：DGA组分为0.52，负载率为0.23。
 
-\subsection{问题一模型：发酵动力学模型}
-啤酒发酵过程遵循质量作用定律，建立如下反应动力学模型：
-\\frac{dC_S}{dt} = -k_1 C_S - k_2 C_S C_X
-\\frac{dC_E}{dt} = Y_{E/S} k_1 C_S
-\\frac{dC_{Ac}}{dt} = k_3 C_S - k_4 C_{Ac}
-其中C_S为糖度，C_E为乙醇浓度，C_Ac为乙酸浓度，C_X为菌体浓度，k_1,k_2,k_3,k_4为反应速率常数。
-
-\subsection{问题二模型：库存-生产联合优化}
-\subsubsection{目标函数}
+\subsection{问题二：多源融合故障诊断}
+构建多通道CNN-LSTM融合网络：
 \begin{align}
-\min Z &= \sum_{t=1}^{T}[c_p P_t + c_h I_t + c_s S_t] 
-\text{s.t.} \quad I_t = I_{t-1} + P_t - D_t, \quad \forall t 
+\mathbf{F}^{(k)} &= \text{CNN-Encoder}(X^{(k)}) \\
+\alpha_k &= \text{Softmax}\left(\mathbf{W}_\alpha \cdot \mathbf{F}^{(k)}\right)\\
+\mathbf{F}_{\text{fused}} &= \sum_k \alpha_k \mathbf{F}^{(k)} \\
+\hat{y} &= \text{LSTM}(\mathbf{F}_{\text{fused}})
 \end{align}
-其中P_t为生产量，I_t为库存量，D_t为需求量，c_p/c_h/c_s分别为生产成本/持有成本/缺货成本。
+引入物理约束层，将DRTA三比值法作为知识蒸馏损失项。
 
-\subsection{问题三模型：配送路径优化}
-采用VRP模型，目标函数为最小化总运输成本：
-\\min \quad Z = \sum_{k \in K}\sum_{i \in V}\sum_{j \in V} c_{ij} x_{ijk}
-约束条件包括：车辆容量约束、时间窗约束、流量守恒约束。采用遗传算法求解，种群大小100，迭代200代。
+\subsection{问题三：RUL预测与维护优化}
+退化轨迹采用改进Wiener过程建模：
+$$X(t) = X(0) + \mu t + \sigma B(t)$$
+RUL定义为首次穿越故障阈值的时间：$RUL = \inf\{t: X(t) >= X_\text{threshold}}$。
+维护优化建模为马尔可夫决策过程(MDP)，采用Q-learning求解最优检修策略。

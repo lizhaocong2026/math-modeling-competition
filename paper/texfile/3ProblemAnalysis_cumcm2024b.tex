@@ -1,17 +1,28 @@
-\newpage
-\section{问题分析}
+\\newpage
+\\section{问题分析}
 
-\subsection{问题一分析}
-本题要求预测碳排放趋势并识别碳达峰时间，属于\textbf{时序预测+转折点检测}
-问题。Prophet模型擅长处理具有强季节性和节假日效应的时序数据。我们需要确定最优的changepoint_prior_scale参数，使模型既能捕捉长期趋势，又不拟合噪声。Prophet模型形式为：\y(t) = g(t) + s(t) + h(t) + \epsilon_t
-其中g(t)为趋势项（分段线性或Logistic增长），s(t)为周期项（傅里叶级数），h(t)为节假日效应。
+\\subsection{问题一分析}
+本题要求对交通流量数据进行\\textbf{STL分解}，提取趋势项和季节项。根据时间序列分析理论，任何时间序列都可以分解为趋势项$、季节项$：
+F_t = T_t + S_t + R_t
 
-\subsection{问题二分析}
-本题是\textbf{因素分解}
-问题。LMDI方法将碳排放变化分解为多个驱动因子：\C = P \cdot (GDP/P) \cdot (E/GDP) \cdot (C/E)
-分别对应人口、人均GDP、能源强度和碳排放强度。LMDI分解具有完全分解性（无残差项），适合用于政策归因分析。对数平均权重函数为：\L(a,b) = \frac{a-b}{\ln a - \ln b}, \quad a \neq b
+\\textbf{解题思路}：
+\\begin{enumerate}
+    \\item 首先对原始数据进行平稳性检验（ADF检验），检验统计量为：
+    ADF = \\frac{\\hat{\\delta}}{SE(\\hat{\\delta})}, \\quad \\text{原假设：序列存在单位根}
+    \\item 使用STL方法进行分解，确定周期参数$\\tau$，通过周期性自相关函数ACF识别
+    \\item 对趋势项和季节项分别建模分析，趋势项可用局部多项式平滑
+    \\item 通过可视化验证分解效果，残差应服从白噪声
+\\end{enumerate}
 
-\subsection{问题三分析}
-本题是\textbf{多目标优化}
-问题。三个目标之间存在内在冲突：降低碳排放需要增加清洁能源投资，推高经济成本。采用加权求和法将多目标转化为单目标：\\min \quad Z = w_1 \cdot \frac{C_{cost}}{C_{cost}^{max}} + w_2 \cdot \frac{E_{sec}}{E_{sec}^{max}} + w_3 \cdot \frac{C_{carbon}}{C_{carbon}^{max}}
-权重通过熵权法客观确定，最终得到Pareto最优解集。
+\\subsection{问题二分析}
+本题需要构建\\textbf{LSTM-ARIMA混合预测模型}。单一模型存在局限性：
+\\begin{itemize}
+    \\item ARIMA擅长捕捉线性趋势，但难以处理非线性关系
+    \\item LSTM擅长捕捉非线性模式，但训练成本高
+\\end{itemize}
+
+因此我们采用\\textbf{残差修正策略}：先用ARIMA预测线性部分，再用LSTM预测残差。设ARIMA预测值为$\hat{y}_t^{ARIMA}$，LSTM预测残差为$\hat{e}_t^{LSTM}$，则最终预测为：
+\hat{y}_t = \hat{y}_t^{ARIMA} + \hat{e}_t^{LSTM}
+
+\\subsection{问题三分析}
+本题是典型的多目标优化问题，需要同时优化两个相互冲突的目标。我们采用NSGA-II算法求解Pareto前沿，并通过熵权-TOPSIS方法进行方案排序。
